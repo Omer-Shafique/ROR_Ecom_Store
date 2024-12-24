@@ -1,0 +1,23 @@
+<% if product.user == current_user %>
+<table class="table table-striped table-hover table-bordered">
+  <thead class=table-dark>
+    <tr>
+      <th>Product Title</th>
+      <th>Product Description</th>
+      <th>Product SKU</th>
+      <th>Stock Quantity</th>
+      <th>User ID</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><%= link_to product.product_title, product %> </td>
+        <td><%= product.product_description %></td>
+        <td><%= product.product_sku %></td>
+        <td><%= product.stock_quantity_string %></td>
+        <td><%= product.user_id %></td>
+      </tr>
+  </tbody>
+
+</table>
+<% end %>

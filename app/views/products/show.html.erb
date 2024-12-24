@@ -1,0 +1,9 @@
+
+<%= render @product %>
+
+<div>
+  <%= link_to "Edit this product", edit_product_path(@product), class:"btn btn-sm btn-warning" %> 
+  <%= link_to "Back to products", products_path , class:"btn btn-sm btn-primary" %>
+
+  <%= button_to "Delete this product", @product, method: :delete , class:"btn btn-sm btn-danger my-2" %>
+</div>

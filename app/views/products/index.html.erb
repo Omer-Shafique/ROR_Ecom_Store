@@ -1,0 +1,28 @@
+<%# <p style="color: green"><%= notice</p>  %>
+
+<% if user_signed_in?%>
+<% content_for :title, "Products" %>
+
+
+<table class="table">
+  <% @products.each do |product| %>
+    <%= render product %>
+    <%# <% if product.user == current_user %> 
+    <%# <p> %>
+      <%# <%= link_to "Show this product", product, class:"btn btn-warning" %> 
+    <%# </p> %>
+    <%# <%end %> 
+    
+  <% end %>
+</table>
+
+<%= link_to "New product", new_product_path, class:"btn btn-danger my-2" %>
+
+<% else%>
+  <h1>Sign in to view products</h1>
+  <%= link_to "Sign in", new_user_session_path, class:"btn btn-primary" %>
+  <%= link_to "Sign up", new_user_registration_path, class:"btn btn-success" %> 
+
+
+
+<%end%>
