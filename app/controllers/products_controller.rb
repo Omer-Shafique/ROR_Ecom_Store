@@ -47,37 +47,28 @@ class ProductsController < ApplicationController
     end
   end
 
-  # Direct Checkout action
   def checkout
     @product = Product.find(params[:id])
-
-    # Set your secret key for Stripe
+    @product.create_or_update_stripe_product
     Stripe.api_key = Rails.configuration.stripe[:secret_key]
-
-    # Create the Stripe charge on form submission
     token = params[:stripeToken]
 
     begin
-      # Create the charge with the Stripe token
       charge = Stripe::Charge.create(
-        amount: (@product.price * 100).to_i,  # Convert price to cents
-        currency: 'usd',                     # Adjust currency as needed
-        source: token,                       # Use the token from the form
+        amount: (@product.price * 100).to_i, 
+        currency: 'usd',                    
+        source: token,                     
         description: "Charge for product #{@product.product_title}"
       )
 
-      # Handle success
-      flash[:success] = "Payment was successful!"
+      flash[:success] = "Payment successful!"
       redirect_to product_path(@product)
 
     rescue Stripe::CardError => e
-      # Handle card errors like card declines
       flash[:error] = e.message
-      # render :checkout
 
     rescue Stripe::StripeError => e
-      # Handle other Stripe API errors
-      # flash[:error] = "There was an error processing your payment. Please try again."
+      flash[:error] = "There was an error processing your payment. Please try again."
       render 'orders/checkout'
     end
   end
@@ -86,6 +77,7 @@ class ProductsController < ApplicationController
 
   def set_product
     @product = Product.find(params[:id])
+    @product.create_or_update_stripe_product
   end
 
   def product_params

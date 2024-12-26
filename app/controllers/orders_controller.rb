@@ -2,16 +2,13 @@ class OrdersController < ApplicationController
   before_action :authenticate_user!
   before_action :set_order, only: [:show, :checkout]
 
-  # Display a specific order
   def show
   end
 
-  # Create a new order for a specific product
   def new
     @order = Order.find(params[:order_id])
   end
 
-  # Create an order for a specific product
   def create
     @product = Product.find(params[:product_id])
     @order = Order.new(user: current_user, product: @product, status: 'pending')
@@ -23,12 +20,10 @@ class OrdersController < ApplicationController
     end
   end
 
-  # List all orders for the current user
   def index
     @orders = current_user.orders
   end
 
-  # Handle Stripe checkout and update order status
   def checkout
     if process_payment(@order)
       @order.update(status: "completed")
@@ -40,7 +35,6 @@ class OrdersController < ApplicationController
 
   private
 
-  # Set the order and ensure the current user owns it
   def set_order
     @order = Order.find_by(id: params[:id])
     unless @order && @order.user == current_user
@@ -48,13 +42,12 @@ class OrdersController < ApplicationController
     end
   end
 
-  # Example of Stripe payment processing
   def process_payment(order)
     begin
       Stripe::Charge.create(
-        amount: (order.product.price * 100).to_i, # Convert to cents
+        amount: (order.product.price * 100).to_i, 
         currency: 'usd',
-        source: params[:stripeToken], # Ensure this token is passed
+        source: params[:stripeToken],
         description: "Charge for #{order.product.title}"
       )
       true

@@ -1,56 +1,54 @@
-# class CheckoutController < ApplicationController
-#   def new
-#     @product = Product.find(params[:product_id])
-#     @product_title = @product.title
-#   end
+class CheckoutController < ApplicationController
+  before_action :set_product, only: [:new, :create]
 
-#   def create
-#     @product = Product.find(params[:product_id])
-#     @amount = (@product.price * 100).to_i  # Amount in cents
+  def new
+  end
 
-#     # Create a PaymentIntent with the order amount and currency
-#     payment_intent = Stripe::PaymentIntent.create({
-#       amount: @amount,
-#       currency: 'usd',
-#       metadata: { product_id: @product.id }
-#     })
+  def create
+    @stripe_token = params[:stripeToken]
+    @product = Product.find(params[:product_id])
+  
+    begin
+      charge = Stripe::Charge.create({
+        amount: (@product.price * 100).to_i, 
+        currency: 'usd',
+        source: @stripe_token,
+        description: @product.title,
+      })
 
-#     # Store the payment intent client secret in the form
-#     @client_secret = payment_intent.client_secret
-#   end
+      if charge.status == 'succeeded'
+        @product.update(stock_quantity: @product.stock_quantity_string.to_i - 1)
+        update_stripe_inventory(@product)
+        flash[:success] = "Payment Successful. Thank you for your purchase!"
 
-#   def stripe_webhook
-#     payload = request.body.read
-#     sig_header = request.env['HTTP_STRIPE_SIGNATURE']
-#     event = nil
+      else
+        flash[:error] = "Payment failed. Please try again."
+        render :new
+      end
+    rescue Stripe::CardError => e
+      flash[:error] = e.message
+      render :new
+    end
+  end
 
-#     begin
-#       event = Stripe::Webhook.construct_event(
-#         payload, sig_header, ENV['STRIPE_WEBHOOK_SECRET']
-#       )
-#     rescue JSON::ParserError => e
-#       status 400
-#       return
-#     rescue Stripe::SignatureVerificationError => e
-#       status 400
-#       return
-#     end
+  private
 
-#     # Handle successful payment
-#     if event['type'] == 'payment_intent.succeeded'
-#       payment_intent = event['data']['object'] # Contains a Stripe::PaymentIntent
+  def set_product
+    @product = Product.find(params[:product_id])
+  end
 
-#       # Retrieve product details from metadata
-#       product_id = payment_intent['metadata']['product_id']
-#       product = Product.find(product_id)
-
-#       # Update the stock of the product in the database
-#       if product.stock_quantity > 0
-#         product.update(stock_quantity: product.stock_quantity - 1)
-#       end
-#     end
-
-#     # Acknowledge receipt of the event
-#     head :ok
-#   end
-# end
+  def update_stripe_inventory(product)
+    begin
+      stripe_product = Stripe::Product.retrieve(product.stripe_product_id)
+      stripe_product.inventory = { available_quantity: product.stock_quantity }
+      stripe_product.save
+    rescue Stripe::InvalidRequestError => e
+      Stripe::Product.create({
+        name: product.title,
+        description: product.description,
+        type: 'good',
+        active: true
+      })
+    end
+  end
+end

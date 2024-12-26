@@ -17,7 +17,9 @@ Rails.application.routes.draw do
     end
   end
 
-   post '/stripe/webhook', to: 'checkout#stripe_webhook'
+  #  post '/stripe/webhook', to: 'checkout#stripe_webhook'
+ post 'stripe/webhook', to: 'stripe#webhook'
+
 
   # Root route
   root "products#index"
