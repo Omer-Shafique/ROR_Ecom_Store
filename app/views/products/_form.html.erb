@@ -2,7 +2,6 @@
   <% if product.errors.any? %>
     <div style="color: red">
       <h2><%= pluralize(product.errors.count, "error") %> prohibited this product from being saved:</h2>
-
       <ul>
         <% product.errors.each do |error| %>
           <li><%= error.full_message %></li>
@@ -11,32 +10,31 @@
     </div>
   <% end %>
 
-  <div class="form-group my-2" >
-    <%# <%= form.label :product_title, style: "display: block" %> 
-    <%= form.text_field :product_title, class:"form-control" , placeholder:"Product Title" %>
+  <div class="form-group my-2">
+    <%= form.text_field :product_title, class: "form-control", placeholder: "Product Title" %>
   </div>
 
   <div class="form-group my-2">
-    <%# <%= form.label :product_description, style: "display: block" %> 
-    <%= form.text_field :product_description, class:"form-control", placeholder:"Product Description"  %>
+    <%= form.text_field :product_description, class: "form-control", placeholder: "Product Description" %>
   </div>
 
   <div class="form-group my-2">
-    <%# <%= form.label :product_sku, style: "display: block" %> 
-    <%= form.text_field :product_sku, class:"form-control" , placeholder:"Product SKU"  %>
+    <%= form.text_field :product_sku, class: "form-control", placeholder: "Product SKU" %>
   </div>
 
   <div class="form-group my-2">
-    <%# <%= form.label :stock_quantity_string, style: "display: block" %> 
-    <%= form.text_field :stock_quantity_string, class:"form-control" , placeholder:"Stock Quantity"  %>
+    <%= form.text_field :stock_quantity_string, class: "form-control", placeholder: "Stock Quantity" %>
   </div>
 
+  <div class="form-group my-2">
+    <%= form.number_field :user_id, id: :product_user_id, class: "form-control", value: current_user.id, type: "hidden" %>
+  </div>
 
   <div class="form-group my-2">
-    <%= form.number_field :user_id, id: :product_user_id ,  class:"form-control" , value:current_user.id , type:"hidden" %>
+    <%= form.text_field :price, class: "form-control", placeholder: "Product Price" %>
   </div>
 
   <div>
-    <%= form.submit class:"btn btn-warning my-4" %>
+    <%= form.submit class: "btn btn-warning my-4" %>
   </div>
 <% end %>

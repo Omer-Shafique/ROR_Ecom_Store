@@ -1,0 +1,18 @@
+<% content_for :title, "Thank You for Your Purchase!" %>
+
+<div class="thank-you-container">
+  <div class="thank-you-message">
+    <h1 class="thank-you-heading">Thank You for Your Purchase!</h1>
+    <p class="thank-you-subheading">We appreciate your business and your payment has been successfully processed.</p>
+    <div class="thank-you-details">
+      <h3>Order Summary</h3>
+      <p><strong>Product:</strong> <%= @product.product_title %></p>
+      <p><strong>Price:</strong> $<%= @product.price %></p>
+      <p><strong>Description:</strong> <%= @product.product_description %></p>
+    </div>
+    <div class="thank-you-footer">
+      <a href="<%= products_path %>" class="btn btn-primary">Return to Shop</a>
+      <a href="<%= product_path(@product) %>" class="btn btn-secondary">View Your Product</a>
+    </div>
+  </div>
+</div>

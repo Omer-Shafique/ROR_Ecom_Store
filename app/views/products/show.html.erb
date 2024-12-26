@@ -1,9 +1,14 @@
-
 <%= render @product %>
 
 <div>
-  <%= link_to "Edit this product", edit_product_path(@product), class:"btn btn-sm btn-warning" %> 
-  <%= link_to "Back to products", products_path , class:"btn btn-sm btn-primary" %>
+  <%= link_to "Edit this product", edit_product_path(@product), class: "btn btn-sm btn-warning" %>
+  <%= link_to "Back to products", products_path, class: "btn btn-sm btn-primary" %>
 
-  <%= button_to "Delete this product", @product, method: :delete , class:"btn btn-sm btn-danger my-2" %>
+  <%= button_to "Delete this product", @product, method: :delete, class: "btn btn-sm btn-danger my-2" %>
+
+  <%= form_with(url: checkout_product_path(@product), method: :get) do %>
+  <%= submit_tag 'Proceed to Checkout', class: 'btn btn-sm btn-primary' %>
+<% end %>
+
+
 </div>
