@@ -77,7 +77,7 @@ class ProductsController < ApplicationController
 
     rescue Stripe::StripeError => e
       # Handle other Stripe API errors
-      flash[:error] = "There was an error processing your payment. Please try again."
+      # flash[:error] = "There was an error processing your payment. Please try again."
       render 'orders/checkout'
     end
   end
