@@ -6,21 +6,18 @@ class CheckoutController < ApplicationController
 
   def create
     @stripe_token = params[:stripeToken]
-    @product = Product.find(params[:product_id])
-  
     begin
       charge = Stripe::Charge.create({
-        amount: (@product.price * 100).to_i, 
+        amount: (@product.price * 100).to_i,
         currency: 'usd',
         source: @stripe_token,
-        description: @product.title,
+        description: @product.title
       })
 
       if charge.status == 'succeeded'
-        @product.update(stock_quantity: @product.stock_quantity_string.to_i - 1)
-        update_stripe_inventory(@product)
+        update_inventory(@product, -1)
         flash[:success] = "Payment Successful. Thank you for your purchase!"
-
+        redirect_to product_path(@product)
       else
         flash[:error] = "Payment failed. Please try again."
         render :new
@@ -37,18 +34,8 @@ class CheckoutController < ApplicationController
     @product = Product.find(params[:product_id])
   end
 
-  def update_stripe_inventory(product)
-    begin
-      stripe_product = Stripe::Product.retrieve(product.stripe_product_id)
-      stripe_product.inventory = { available_quantity: product.stock_quantity }
-      stripe_product.save
-    rescue Stripe::InvalidRequestError => e
-      Stripe::Product.create({
-        name: product.title,
-        description: product.description,
-        type: 'good',
-        active: true
-      })
-    end
+  def update_inventory(product, quantity_change)
+    product.update!(stock_quantity_string: product.stock_quantity_string.to_i + quantity_change)
+    product.sync_stripe_inventory
   end
 end
