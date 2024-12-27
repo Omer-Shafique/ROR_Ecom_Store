@@ -13,6 +13,7 @@ class ProductsController < ApplicationController
   end
 
   def show
+    @products = Product.where(user: current_user)
   end
 
   def new
