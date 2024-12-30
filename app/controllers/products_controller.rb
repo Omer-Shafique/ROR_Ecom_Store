@@ -168,7 +168,7 @@ class ProductsController < ApplicationController
       flash[:error] = e.message
 
     rescue Stripe::StripeError => e
-      flash[:error] = "There was an error processing your payment. Please try again."
+      # flash[:error] = "There was an error processing your payment. Please try again."
       render 'orders/checkout'
     end
   end
