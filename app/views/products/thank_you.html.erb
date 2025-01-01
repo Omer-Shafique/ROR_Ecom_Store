@@ -4,15 +4,10 @@
   <div class="thank-you-message">
     <h1 class="thank-you-heading">Thank You for Your Purchase!</h1>
     <p class="thank-you-subheading">We appreciate your business and your payment has been successfully processed.</p>
-    <div class="thank-you-details">
-      <h3>Order Summary</h3>
-      <p><strong>Product:</strong> <%= @product.product_title %></p>
-      <p><strong>Price:</strong> $<%= @product.price %></p>
-      <p><strong>Description:</strong> <%= @product.product_description %></p>
-    </div>
-    <div class="thank-you-footer">
-      <a href="<%= products_path %>" class="btn btn-primary">Return to Shop</a>
-      <a href="<%= product_path(@product) %>" class="btn btn-secondary">View Your Product</a>
-    </div>
+    <p class="thank-you-text">You will receive an email confirmation shortly with your order details. If you have any questions, please contact us at <a href="mailto:  [email protected]"> [email protected]</a>.</p>    
+    <p class="thank-you-text">Thank you for shopping with us!</p>
+
+    <div class="thank-you-actions">
+      <a href="<%= products_path %>" class="btn btn-primary">Continue Shopping</a>   
   </div>
 </div>

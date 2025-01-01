@@ -117,6 +117,9 @@ class ProductsController < ApplicationController
   def edit
   end
 
+  def thank_you
+  end
+
   def create
     @product = current_user.products.build(product_params)
     if @product.save
@@ -162,7 +165,8 @@ class ProductsController < ApplicationController
       @product.reduce_stripe_quantity
 
       flash[:success] = "Payment successful!"
-      redirect_to product_path(@product)
+      # redirect_to product_path(@product)
+      redirect_to thank_you_products_path
 
     rescue Stripe::CardError => e
       flash[:error] = e.message

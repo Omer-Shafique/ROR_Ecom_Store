@@ -15,6 +15,11 @@ Rails.application.routes.draw do
       get 'checkout' # This will point to the checkout action in ProductsController
       post 'checkout', to: 'products#checkout' # Adding POST method for checkout action
     end
+
+    collection do
+      get 'thank_you', to: 'products#thank_you' 
+    end
+    
   end
 
   #  post '/stripe/webhook', to: 'checkout#stripe_webhook'
