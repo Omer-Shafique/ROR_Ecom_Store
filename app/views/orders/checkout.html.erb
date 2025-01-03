@@ -48,6 +48,16 @@
       </div>
 
       <div class="form-group">
+        <%= f.label :address, "Your Address", class: "font-weight-bold" %>
+        <%= f.text_field :address, class: "form-control", required: true %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :phone, "Your Phone", class: "font-weight-bold" %>
+        <%= f.text_field :phone, class: "form-control", required: true %>
+      </div>
+
+      <div class="form-group">
         <label for="card-element" class="font-weight-bold" aria-label="Enter credit or debit card details">
           Credit or Debit Card
         </label>
@@ -99,15 +109,44 @@
       });
     });
 
+    // function stripeTokenHandler(token) {
+    //   var form = document.querySelector('form');
+    //   var hiddenInput = document.createElement('input');
+    //   hiddenInput.setAttribute('type', 'hidden');
+    //   hiddenInput.setAttribute('name', 'stripeToken');
+    //   hiddenInput.setAttribute('value', token.id);
+    //   form.appendChild(hiddenInput);
+    //   form.submit();
+    // }
+
     function stripeTokenHandler(token) {
-      var form = document.querySelector('form');
-      var hiddenInput = document.createElement('input');
-      hiddenInput.setAttribute('type', 'hidden');
-      hiddenInput.setAttribute('name', 'stripeToken');
-      hiddenInput.setAttribute('value', token.id);
-      form.appendChild(hiddenInput);
-      form.submit();
-    }
+  var form = document.querySelector('form');
+
+  // Create hidden input for stripeToken
+  var hiddenInputToken = document.createElement('input');
+  hiddenInputToken.setAttribute('type', 'hidden');
+  hiddenInputToken.setAttribute('name', 'stripeToken');
+  hiddenInputToken.setAttribute('value', token.id);
+  form.appendChild(hiddenInputToken);
+
+  // Create hidden input for name
+  var hiddenInputName = document.createElement('input');
+  hiddenInputName.setAttribute('type', 'hidden');
+  hiddenInputName.setAttribute('name', 'name');
+  hiddenInputName.setAttribute('value', document.querySelector('[name="name"]').value);
+  form.appendChild(hiddenInputName);
+
+  // Create hidden input for email
+  var hiddenInputEmail = document.createElement('input');
+  hiddenInputEmail.setAttribute('type', 'hidden');
+  hiddenInputEmail.setAttribute('name', 'email');
+  hiddenInputEmail.setAttribute('value', document.querySelector('[name="email"]').value);
+  form.appendChild(hiddenInputEmail);
+
+  // Submit the form
+  form.submit();
+}
+
   });
 </script>
 

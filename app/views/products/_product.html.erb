@@ -1,90 +1,63 @@
 <% if product.user == current_user %>
   <div class="container mt-5">
-    <div class="card shadow-lg p-4" style="border-radius: 15px; background-color: #f9f9f9;">
-      <h2 class="text-center text-primary mb-4" style="font-weight: bold; letter-spacing: 1px; color: #1c3d67;">Product Details: <%= product.product_title %></h2>
+    <div class="card shadow-lg p-4" style="border-radius: 12px; background-color: #f9f9f9;">
+      <h2 class="text-center text-primary mb-4" style="font-weight: 600; letter-spacing: 0.8px;">Product Details</h2>
 
-      <!-- Product Images Section (Image Slider) -->
-      <div class="row mb-4">
-        <div class="col-md-6 d-flex justify-content-center my-5">
-          <!-- Image Slider -->
+      <!-- Product Details Section -->
+      <div class="row g-4">
+        <!-- Product Images Section -->
+        <div class="col-md-6">
           <div id="productImageCarousel" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner">
+            <div class="carousel-inner rounded shadow-sm">
               <div class="carousel-item active">
-                <!-- Placeholder Image 1 -->
-                <img src="https://plus.unsplash.com/premium_photo-1675431443027-ad1f46c93c8d?q=80&w=1916&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Product Image 1" class="d-block w-100 rounded shadow-sm">
+                <img src="https://images.unsplash.com/photo-1522115174737-2497162f69ec?q=80&w=1769&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Product Image 1" class="d-block w-100">
               </div>
               <div class="carousel-item">
-                <!-- Placeholder Image 2 -->
-                <img src="https://plus.unsplash.com/premium_photo-1679913792906-13ccc5c84d44?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Product Image 2" class="d-block w-100 rounded shadow-sm">
+                <img src="https://plus.unsplash.com/premium_photo-1679913792906-13ccc5c84d44?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Product Image 2" class="d-block w-100">
               </div>
               <div class="carousel-item">
-                <!-- Placeholder Image 3 -->
-                <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1999&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Product Image 3" class="d-block w-100 rounded shadow-sm">
+                <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1999&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Product Image 3" class="d-block w-100">
               </div>
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#productImageCarousel" data-bs-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Previous</span>
+              <span class="carousel-control-prev-icon"></span>
             </button>
             <button class="carousel-control-next" type="button" data-bs-target="#productImageCarousel" data-bs-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Next</span>
+              <span class="carousel-control-next-icon"></span>
             </button>
           </div>
         </div>
 
-        <!-- Product Details Section (Left Aligned) -->
+        <!-- Product Info Section -->
         <div class="col-md-6">
-          <!-- Product Title and Description Section -->
-          <div class="mb-4 text-start">
-            <h3 class="text mb-3 my-4" style="font-size: 1.8rem; font-weight: bold;">Product Title</h3>
-            <p class="text-muted" style="font-size: 1.1rem; color: #333;"><%= product.product_title %></p>
-          </div>
+          <h3 class="mb-3" style="font-size: 1.5rem; font-weight: bold; color: #333;"><%= product.product_title %></h3>
+          <p class="text-muted" style="font-size: 1rem;"><%= product.product_description %></p>
 
-          <div class="mb-4 text-start">
-            <h4 class="text mb-3" style="font-size: 1.6rem; font-weight: bold;">Product Description</h4>
-            <p class="text-muted" style="font-size: 1.1rem; color: #555;"><%= product.product_description %></p>
-          </div>
-
-          <!-- Price, SKU and Stock Quantity Section -->
-          <div class="row mb-4 text-start">
-            <div class="">
-              <h4 class="text" style="font-weight: bold;">Price</h4>
-              <%# <p class="font-weight-bold" style="color: #ff6f61; font-size: 1.4rem;">$199.99</p> %>
-      
-                <p class="font-weight-bold" style="font-size: 1.2rem; color: #333;"><%= product.respond_to?(:product_price) && product.product_price.present? ? number_to_currency(product.product_price) : "-" %></p>
+          <div class="mt-4">
+            <div class="mb-2">
+              <strong>Price: </strong>
+              <span style="color: #28a745;">$<%= product.price.present? ? product.price : "N/A" %></span>
             </div>
-            <div class="">
-              <h4 class="text" style="font-weight: bold;">SKU</h4>
-              <p class="font-weight-bold" style="font-size: 1.2rem; color: #333;"><%= product.product_sku.present? ? product.product_sku : "-" %></p>
+            <div class="mb-2">
+              <strong>SKU: </strong>
+              <span><%= product.product_sku.present? ? product.product_sku : "N/A" %></span>
             </div>
-            <div class="">
-              <h4 class="text" style="font-weight: bold;">Stock Quantity</h4>
-              <p class="font-weight-bold text-success" style="font-size: 1.2rem;"><%= product.stock_quantity_string.present? ? product.stock_quantity_string : "2" %></p>
+            <div class="mb-2">
+              <strong>Stock: </strong>
+              <span class="text-success"><%= product.stock_quantity_string.present? ? product.stock_quantity_string : "2" %></span>
             </div>
           </div>
 
-          <!-- Add to Wishlist and Checkout Buttons -->
-          <div class="row mb-2 text-start">
-          <div class="col-md-4">
-            <%= link_to "Back to products", products_path, class: "btn btn-primary shadow-sm me-2" %>
-          </div>
-          <div class="col-md-4">
-            <!-- Dummy Wishlist Button -->
-            <%= link_to "Add to Wishlist", "#", class: "btn btn-outline-danger shadow-sm me-2" %>
-          </div>
-          <div class="col-md-4">
-            <%= link_to "Buy now", checkout_product_path(product), class: "btn btn-success shadow-sm" %>
+          <!-- Action Buttons -->
+          <div class="d-flex mt-4">
+            <%= link_to "Back to Products", products_path, class: "btn btn-outline-secondary me-2" %>
+            <%= link_to "Wishlist", "#", class: "btn btn-outline-danger me-2" %>
+            <%= link_to "Buy Now", checkout_product_path(product), class: "btn btn-success" %>
           </div>
         </div>
-        </div>
-      </div>
-      
-      <div class="text-center mt-4">
-        <%# <%= link_to "Edit Product", edit_product_path(product), class: "btn btn-warning btn-lg shadow-sm  mx-2" %> 
-        <%# <%= link_to "Delete Product", product_path(product), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-lg shadow-sm  mx-2" %> 
-
       </div>
     </div>
   </div>
 <% end %>
+
+<br><br><br>  

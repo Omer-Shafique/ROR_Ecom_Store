@@ -23,4 +23,7 @@ class StripeController < ApplicationController
 
     head :ok
   end
+
+
+  
 end

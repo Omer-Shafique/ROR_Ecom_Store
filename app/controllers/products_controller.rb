@@ -152,30 +152,37 @@ class ProductsController < ApplicationController
     @product.create_or_update_stripe_product
     Stripe.api_key = Rails.configuration.stripe[:secret_key]
     token = params[:stripeToken]
-
+    user_name = params[:name] 
+    user_email = params[:email] 
+    user_address = params[:address] 
+    phone = params[:phone] 
+  
     begin
       charge = Stripe::Charge.create(
         amount: (@product.price * 100).to_i,
         currency: 'usd',
         source: token,
-        description: "Charge for product #{@product.product_title}"
+        description: "Charge for product #{@product.product_title}",
+        receipt_email: user_email,
+        metadata: { 'Name' => user_name, 'Email' => user_email , 'Address' => user_address , 'Phone' => phone } 
       )
-
+  
       # Reduce product quantity in both Stripe and store
       @product.reduce_stripe_quantity
-
+  
       flash[:success] = "Payment successful!"
-      # redirect_to product_path(@product)
       redirect_to thank_you_products_path
-
+  
     rescue Stripe::CardError => e
       flash[:error] = e.message
-
+      render 'orders/checkout'
+  
     rescue Stripe::StripeError => e
       # flash[:error] = "There was an error processing your payment. Please try again."
       render 'orders/checkout'
     end
   end
+  
 
   private
 
