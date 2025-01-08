@@ -1,6 +1,7 @@
 class OrdersController < ApplicationController
   before_action :authenticate_user!
   before_action :set_order, only: [:show, :checkout]
+  before_action :authorize_admin!, only: [:index]
 
   def show
   end
@@ -11,7 +12,7 @@ class OrdersController < ApplicationController
 
   def create
     @product = Product.find(params[:product_id])
-    @order = Order.new(user: current_user, product: @product, status: 'pending')
+    @order = Order.new(user: current_user, product: @product, status: "pending")
 
     if @order.save
       redirect_to new_order_path(order_id: @order.id), notice: 'Proceed to checkout.'
@@ -21,7 +22,7 @@ class OrdersController < ApplicationController
   end
 
   def index
-    @orders = current_user.orders
+    @orders = Order.all
   end
 
   def checkout
@@ -42,10 +43,16 @@ class OrdersController < ApplicationController
     end
   end
 
+  def authorize_admin!
+    unless current_user.admin?
+      redirect_to orders_path, alert: "You are not authorized to view all orders."
+    end
+  end
+
   def process_payment(order)
     begin
       Stripe::Charge.create(
-        amount: (order.product.price * 100).to_i, 
+        amount: (order.product.price * 100).to_i,
         currency: 'usd',
         source: params[:stripeToken],
         description: "Charge for #{order.product.title}"
@@ -56,5 +63,4 @@ class OrdersController < ApplicationController
       false
     end
   end
-  
 end

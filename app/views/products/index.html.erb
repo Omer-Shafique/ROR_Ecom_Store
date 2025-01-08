@@ -8,6 +8,8 @@
       <table class="table table-hover table-striped table-bordered text-center">
         <thead class="table-dark" style="background: linear-gradient(90deg, #4b6cb7, #182848); color: #ffffff;">
           <tr>
+
+            <th style="padding: 12px; font-size: 16px;">Product Image</th>
             <th style="padding: 12px; font-size: 16px;">Product Title</th>
             <th style="padding: 12px; font-size: 16px;">Product Description</th>
             <th style="padding: 12px; font-size: 16px;">Product SKU</th>
@@ -19,6 +21,16 @@
         <tbody>
           <% @products.each do |product| %>
             <tr style="background-color: #ffffff; transition: background 0.3s;">
+                    <td>
+                <% if product.images.attached? %>
+                  <% product.images.each do |image| %>
+                    <%= image_tag image, alt: product.product_title, class: "img-fluid", size: "100x100" %>
+                  <% end %>
+                <% else %>
+                  <span>No Image</span>
+                <% end %>
+
+              </td>
               <td style="padding: 12px; font-weight: bold;">
                 <%= link_to product.product_title, product, class: "text-decoration-none text-primary" %>
               </td>
@@ -35,8 +47,10 @@
                 <%= product.price %>
               </td>
               <td style="padding: 12px;">
+                <% if current_user.admin? %>
                 <%= link_to "Edit", edit_product_path(product), class: "btn btn-warning btn-sm shadow-sm  mx-1 my-2" %>
                 <%= link_to "Delete", product_path(product), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-sm shadow-sm  mx-1" %>
+                <% end %>
               </td>
             </tr>
           <% end %>

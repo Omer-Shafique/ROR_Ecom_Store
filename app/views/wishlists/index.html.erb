@@ -1,0 +1,31 @@
+<!-- app/views/wishlists/index.html.erb -->
+<div class="container mt-5">
+  <h2 class="text-center text-primary mb-4" style="font-weight: 600; letter-spacing: 0.8px;">Your Wishlist</h2>
+
+  <% if @wishlisted_products.any? %>
+    <div class="row">
+      <% @wishlisted_products.each do |product| %>
+        <div class="col-md-4 mb-4">
+          <div class="card shadow-sm" style="border-radius: 12px;">
+            <% if product.images.attached? %>
+              <%= image_tag product.images.first, alt: product.product_title, class: "card-img-top", style: "height: 200px; object-fit: cover;" %>
+            <% else %>
+              <img src="https://via.placeholder.com/300x200?text=No+Image+Available" alt="No Image" class="card-img-top" style="height: 200px; object-fit: cover;">
+            <% end %>
+            <div class="card-body">
+              <h5 class="card-title" style="font-size: 1.25rem; font-weight: bold; color: #333;"><%= product.product_title %></h5>
+              <p class="card-text text-muted"><%= truncate(product.product_description, length: 100) %></p>
+              <p><strong>Price:</strong> $<%= product.price %></p>
+              <div class="d-flex justify-content-between">
+                <%= link_to "View Product", product_path(product), class: "btn btn-outline-primary btn-sm" %>
+                <%= link_to "Remove", product_wishlist_path(product), method: :delete, class: "btn btn-outline-danger btn-sm" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="text-center text-muted">You have no products in your wishlist.</p>
+  <% end %>
+</div>

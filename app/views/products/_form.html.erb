@@ -34,6 +34,13 @@
     <%= form.text_field :price, class: "form-control form-control-lg shadow-sm", placeholder: "Enter Product Price", aria: { label: "Product Price" } %>
   </div>
 
+    <div class="form-group mb-3">
+  <%= form.label :images, "Upload Product Images", class: "form-label" %>
+  <%= form.file_field :images, class: "form-control form-control-lg shadow-sm", multiple: true , aria: { label: "Product Images" } %>
+</div>
+
+
+
   <div class="text-center">
     <%= form.submit "Save Product", class: "btn btn-success btn-lg px-5 py-3  shadow-sm" %>
   </div>
