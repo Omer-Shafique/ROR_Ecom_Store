@@ -3,6 +3,7 @@ class Product < ApplicationRecord
   belongs_to :user
   has_many_attached :images
   has_many :wishlists, dependent: :destroy
+  has_many :reviews, dependent: :destroy
   has_many :users_who_wishlisted, through: :wishlists, source: :user
   # validates :image, content_type: [:png, :jpg, :jpeg], size: { less_than: 5.megabytes, message: 'is too large' }
   validate :image_limit

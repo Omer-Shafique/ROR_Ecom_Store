@@ -24,7 +24,7 @@
   <% if @order %>
     <p>Order ID: <%= @order.id %></p>
     <p>Total Amount: <%= @order.total_amount %></p>
-    <a href="<%= order_path(@order) %>" class="btn btn-success mt-3">View Your Order</a>
+    <%= link_to 'View Order Details', order_path(@order), class: 'btn btn-primary' %>
   <% else %>
     <p>No order found. Debugging required.</p>
   <% end %>

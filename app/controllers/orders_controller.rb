@@ -1,66 +1,65 @@
 class OrdersController < ApplicationController
-  before_action :authenticate_user!
-  before_action :set_order, only: [:show, :checkout]
-  before_action :authorize_admin!, only: [:index]
+  before_action :set_order, only: [:show]
 
   def show
+    # @order should be already set by the set_order method
   end
 
-  def new
-    @order = Order.find(params[:order_id])
-  end
+  def fulfill
+    @order = Order.find(params[:id])
 
-  def create
-    @product = Product.find(params[:product_id])
-    @order = Order.new(user: current_user, product: @product, status: "pending")
-
-    if @order.save
-      redirect_to new_order_path(order_id: @order.id), notice: 'Proceed to checkout.'
+    if @order.update(status: 'fulfilled')
+      respond_to do |format|
+        format.html { redirect_to admin_dashboard_path, notice: "Order ##{@order.id} has been fulfilled." }
+        format.js # Render a corresponding JavaScript response
+      end
     else
-      redirect_to @product, alert: 'Error creating your order.'
+      respond_to do |format|
+        format.html { redirect_to admin_dashboard_path, alert: "Failed to fulfill Order ##{@order.id}." }
+        format.js { render js: "alert('Failed to fulfill the order.');" }
+      end
     end
-  end
-
-  def index
-    @orders = Order.all
   end
 
   def checkout
-    if process_payment(@order)
-      @order.update(status: "completed")
-      redirect_to order_path(@order), notice: "Checkout complete!"
+    @product = Product.find(params[:id])
+
+    # Handle Stripe token and process the order
+    stripe_token = params[:stripeToken]
+    customer = Stripe::Customer.create(
+      email: params[:email],
+      source: stripe_token
+    )
+
+    # Create the order
+    order = Order.new(
+      product: @product,
+      customer_name: params[:name],
+      customer_email: params[:email],
+      customer_address: params[:address],
+      customer_phone: params[:phone],
+      stripe_customer_id: customer.id
+    )
+
+    if order.save
+      # Redirect to the order details page if the order is successfully saved
+      redirect_to order_path(order), notice: "Order placed successfully!"
     else
-      redirect_to order_path(@order), alert: "Payment failed. Please try again."
+      # Redirect back with an error if order creation fails
+      redirect_to checkout_product_path(@product), alert: "Failed to place order."
     end
+  rescue StandardError => e
+    # Handle errors (e.g., Stripe errors)
+    redirect_to checkout_product_path(@product), alert: "Payment failed: #{e.message}"
   end
 
   private
 
   def set_order
     @order = Order.find_by(id: params[:id])
-    unless @order && @order.user == current_user
-      redirect_to orders_path, alert: 'Order not found or unauthorized access.'
-    end
-  end
-
-  def authorize_admin!
-    unless current_user.admin?
-      redirect_to orders_path, alert: "You are not authorized to view all orders."
-    end
-  end
-
-  def process_payment(order)
-    begin
-      Stripe::Charge.create(
-        amount: (order.product.price * 100).to_i,
-        currency: 'usd',
-        source: params[:stripeToken],
-        description: "Charge for #{order.product.title}"
-      )
-      true
-    rescue Stripe::CardError => e
-      flash[:error] = e.message
-      false
+    if @order.nil?
+      flash[:error] = "Order not found"
+      redirect_to root_path # Or any other path you want
     end
   end
 end

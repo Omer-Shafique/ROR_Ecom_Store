@@ -3,12 +3,20 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable, and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
+
+  # Associations
   has_many :wishlists
   has_many :wishlist_products, through: :wishlists, source: :product
   has_many :products
-  validates :role, inclusion: { in: %w[admin normal], message: "%{value} is not a valid role" }
-  before_save :set_default_role
+  has_many :orders
 
+  # Validations
+  validates :role, inclusion: { in: %w[admin normal], message: "%{value} is not a valid role" }
+
+  # Callbacks
+  before_validation :set_default_role
+
+  # Role Check Methods
   def admin?
     role == "admin"
   end

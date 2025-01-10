@@ -1,0 +1,146 @@
+<h1 class="text-center mb-4">Admin Dashboard</h1>
+
+<div class="container mt-4">
+  <div class="row">
+    <!-- Orders Section -->
+    <div class="col-md-6">
+  <h3 class="text-primary mb-3">Orders</h3>
+  <% if @orders.present? %>
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+          <tr>
+            <th>Order ID</th>
+            <th>User</th>
+            <th>Total Price</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+  <% @orders.each do |order| %>
+    <tr>
+      <td><%= order.id %></td>
+      <td><%= order.user.email %></td>
+      <td><%= number_to_currency(order.total_price) %></td>
+      <td id="order-status-<%= order.id %>"><%= order.status.capitalize %></td>
+      <td>
+        <% if order.status != 'fulfilled' %>
+          <%= button_to "Fulfill", fulfill_order_path(order), method: :patch, class: "btn btn-success btn-sm", remote: true, data: { confirm: "Are you sure you want to fulfill this order?" } %>
+        <% else %>
+          <span class="badge badge-success">Fulfilled</span>
+        <% end %>
+      </td>
+    </tr>
+  <% end %>
+</tbody>
+
+      </table>
+    </div>
+    <div class="pagination">
+      <%= will_paginate @orders, class: 'pagination justify-content-center' %>
+    </div>
+  <% else %>
+    <p class="alert alert-warning">No orders found.</p>
+  <% end %>
+</div>
+
+
+    <!-- Users Section -->
+    <div class="col-md-6">
+      <h3 class="text-primary mb-3">Users</h3>
+      <% if @users.present? %>
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+              <tr>
+                <th>User ID</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @users.each do |user| %>
+                <tr>
+                  <td><%= user.id %></td>
+                  <td><%= user.email %></td>
+                  <td><%= user.admin? ? 'Admin' : 'User' %></td>
+                  <td>
+                    <%# Button to delete user %>
+                    <%= link_to "Delete", admin_user_path(user), method: :delete, data: { confirm: "Are you sure you want to delete this user?" }, class: "btn btn-danger btn-sm" %>
+
+                    <%# Button to make the user an admin %>
+                    <% if !user.admin? %>
+                      <%= link_to "Make Admin", make_admin_admin_user_path(user), method: :patch, class: "btn btn-success btn-sm ml-2" %>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <p class="alert alert-warning">No users found.</p>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+
+<style>
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 5px; /* Adds spacing between buttons */
+  padding: 20px 0;
+}
+
+.pagination a, 
+.pagination span {
+  display: inline-block;
+  padding: 8px 12px;
+  margin: 0 2px;
+  border: 1px solid #ddd; /* Light gray border */
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 14px;
+  color: #007bff; /* Bootstrap primary color */
+  background-color: #fff; /* White background */
+  transition: all 0.3s ease; /* Smooth hover effect */
+}
+
+.pagination a:hover {
+  background-color: #007bff; /* Highlight on hover */
+  color: #fff; /* White text */
+  border-color: #007bff;
+}
+
+.pagination .current {
+  font-weight: bold;
+  background-color: #007bff; /* Active button background */
+  color: #fff; /* White text for active button */
+  border-color: #007bff;
+  padding: 10px;
+}
+
+.pagination .disabled {
+  color: #aaa; /* Light gray for disabled buttons */
+  background-color: #f9f9f9; /* Subtle gray background */
+  border-color: #ddd;
+  pointer-events: none; /* Disable click events */
+}
+
+.pagination a:first-child, 
+.pagination a:last-child {
+  font-weight: bold; /* Highlight first and last buttons */
+}
+
+.pagination a:first-child:hover, 
+.pagination a:last-child:hover {
+  background-color: #0056b3; /* Slightly darker shade on hover */
+}
+
+
+</style>

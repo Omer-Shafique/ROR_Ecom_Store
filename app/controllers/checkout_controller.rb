@@ -17,7 +17,8 @@ class CheckoutController < ApplicationController
       if charge.status == 'succeeded'
         update_inventory(@product, -1)
         flash[:success] = "Payment Successful. Thank you for your purchase!"
-        redirect_to product_path(@product)
+        # redirect_to product_path(@product)
+         redirect_to order_path(@order)
       else
         flash[:error] = "Payment failed. Please try again."
         render :new
