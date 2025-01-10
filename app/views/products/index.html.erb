@@ -3,7 +3,7 @@
 
   <div class="container mt-5">
     <div class="card shadow-lg p-4" style="border-radius: 15px;">
-      <h2 class="text-center text-primary mb-4">Our Products</h2>
+      <h2 class="text-center text-primary mb-4"></h2>
 
       <table class="table table-hover table-striped table-bordered text-center">
         <thead class="table-dark" style="background: linear-gradient(90deg, #4b6cb7, #182848); color: #ffffff;">
@@ -50,6 +50,9 @@
                 <% if current_user.admin? %>
                 <%= link_to "Edit", edit_product_path(product), class: "btn btn-warning btn-sm shadow-sm  mx-1 my-2" %>
                 <%= link_to "Delete", product_path(product), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-sm shadow-sm  mx-1" %>
+                <% else %>
+                <%= link_to "Buy Now", product_path(product), class: "btn btn-success btn-sm shadow-sm mx-1 my-2" %>
+                <%= link_to "Add to Wishlist", product_path(product), class: "btn btn-danger btn-sm shadow-sm  mx-1" %>
                 <% end %>
               </td>
             </tr>
@@ -58,7 +61,14 @@
       </table>
 
       <div class="text-center mt-4">
-        <%= link_to "Add New Product", new_product_path, class: "btn btn-primary btn-lg shadow-sm  px-5" %>
+
+      <% if current_user.admin? %>
+        <div class="text-center mt-4">
+          <%= link_to "Add New Product", new_product_path, class: "btn btn-primary btn-lg shadow-sm  px-5" %>
+        </div>
+      <% end %>
+
+
       </div>
     </div>
   </div>

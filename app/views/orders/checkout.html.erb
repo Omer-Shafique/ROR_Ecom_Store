@@ -109,44 +109,47 @@
       });
     });
 
-    // function stripeTokenHandler(token) {
-    //   var form = document.querySelector('form');
-    //   var hiddenInput = document.createElement('input');
-    //   hiddenInput.setAttribute('type', 'hidden');
-    //   hiddenInput.setAttribute('name', 'stripeToken');
-    //   hiddenInput.setAttribute('value', token.id);
-    //   form.appendChild(hiddenInput);
-    //   form.submit();
-    // }
-
     function stripeTokenHandler(token) {
-  var form = document.querySelector('form');
+      var form = document.querySelector('form');
 
-  // Create hidden input for stripeToken
-  var hiddenInputToken = document.createElement('input');
-  hiddenInputToken.setAttribute('type', 'hidden');
-  hiddenInputToken.setAttribute('name', 'stripeToken');
-  hiddenInputToken.setAttribute('value', token.id);
-  form.appendChild(hiddenInputToken);
+      // Create hidden input for stripeToken
+      var hiddenInputToken = document.createElement('input');
+      hiddenInputToken.setAttribute('type', 'hidden');
+      hiddenInputToken.setAttribute('name', 'stripeToken');
+      hiddenInputToken.setAttribute('value', token.id);
+      form.appendChild(hiddenInputToken);
 
-  // Create hidden input for name
-  var hiddenInputName = document.createElement('input');
-  hiddenInputName.setAttribute('type', 'hidden');
-  hiddenInputName.setAttribute('name', 'name');
-  hiddenInputName.setAttribute('value', document.querySelector('[name="name"]').value);
-  form.appendChild(hiddenInputName);
+      // Create hidden input for name
+      var hiddenInputName = document.createElement('input');
+      hiddenInputName.setAttribute('type', 'hidden');
+      hiddenInputName.setAttribute('name', 'name');
+      hiddenInputName.setAttribute('value', document.querySelector('[name="name"]').value);
+      form.appendChild(hiddenInputName);
 
-  // Create hidden input for email
-  var hiddenInputEmail = document.createElement('input');
-  hiddenInputEmail.setAttribute('type', 'hidden');
-  hiddenInputEmail.setAttribute('name', 'email');
-  hiddenInputEmail.setAttribute('value', document.querySelector('[name="email"]').value);
-  form.appendChild(hiddenInputEmail);
+      // Create hidden input for email
+      var hiddenInputEmail = document.createElement('input');
+      hiddenInputEmail.setAttribute('type', 'hidden');
+      hiddenInputEmail.setAttribute('name', 'email');
+      hiddenInputEmail.setAttribute('value', document.querySelector('[name="email"]').value);
+      form.appendChild(hiddenInputEmail);
 
-  // Submit the form
-  form.submit();
-}
+      // Create hidden input for address
+      var hiddenInputAddress = document.createElement('input');
+      hiddenInputAddress.setAttribute('type', 'hidden');
+      hiddenInputAddress.setAttribute('name', 'address');
+      hiddenInputAddress.setAttribute('value', document.querySelector('[name="address"]').value);
+      form.appendChild(hiddenInputAddress);
 
+      // Create hidden input for phone
+      var hiddenInputPhone = document.createElement('input');
+      hiddenInputPhone.setAttribute('type', 'hidden');
+      hiddenInputPhone.setAttribute('name', 'phone');
+      hiddenInputPhone.setAttribute('value', document.querySelector('[name="phone"]').value);
+      form.appendChild(hiddenInputPhone);
+
+      // Submit the form
+      form.submit();
+    }
   });
 </script>
 

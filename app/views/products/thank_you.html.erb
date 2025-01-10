@@ -1,13 +1,31 @@
-<% content_for :title, "Thank You for Your Purchase!" %>
-
-<div class="thank-you-container">
+<%# <div class="thank-you-container">
   <div class="thank-you-message">
     <h1 class="thank-you-heading">Thank You for Your Purchase!</h1>
     <p class="thank-you-subheading">We appreciate your business and your payment has been successfully processed.</p>
-    <p class="thank-you-text">You will receive an email confirmation shortly with your order details. If you have any questions, please contact us at <a href="mailto:  [email protected]"> [email protected]</a>.</p>    
+    <p class="thank-you-text">
+      You will receive an email confirmation shortly with your order details. If you have any questions, please contact us at 
+      <a href="mailto:[email protected]">[email protected]</a>.
+    </p>
     <p class="thank-you-text">Thank you for shopping with us!</p>
 
     <div class="thank-you-actions">
-      <a href="<%= products_path %>" class="btn btn-primary">Continue Shopping</a>   
+      <a href="<%= products_path %>
+      <%# " class="btn btn-primary">Continue Shopping</a>
+      <a href="<%= order_path(@order) %>
+      <%# " class="btn btn-success mt-3">View Your Order</a>
+    </div>
   </div>
+</div> %>
+
+
+
+<div class="thank-you-container">
+  <h1>Thank You for Your Purchase!</h1>
+  <% if @order %>
+    <p>Order ID: <%= @order.id %></p>
+    <p>Total Amount: <%= @order.total_amount %></p>
+    <a href="<%= order_path(@order) %>" class="btn btn-success mt-3">View Your Order</a>
+  <% else %>
+    <p>No order found. Debugging required.</p>
+  <% end %>
 </div>

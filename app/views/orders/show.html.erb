@@ -1,0 +1,30 @@
+<% content_for :title, "Order Details" %>
+
+<h1 class="page-title">Order Details</h1>
+
+<p>Thank you for your purchase, <strong><%= @order.name %></strong>!</p>
+
+<table class="table table-striped">
+  <tr>
+    <th>Order ID</th>
+    <td><%= @order.id %></td>
+  </tr>
+  <tr>
+    <th>Product</th>
+    <td><%= @order.product.product_title %></td>
+  </tr>
+  <tr>
+    <th>Price</th>
+    <td><%= number_to_currency(@order.total_price) %></td>
+  </tr>
+  <tr>
+    <th>Address</th>
+    <td><%= @order.address %></td>
+  </tr>
+  <tr>
+    <th>Phone</th>
+    <td><%= @order.phone %></td>
+  </tr>
+</table>
+
+<a href="<%= products_path %>" class="btn btn-primary">Continue Shopping</a>
