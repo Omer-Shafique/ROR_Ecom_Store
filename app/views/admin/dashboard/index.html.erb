@@ -18,23 +18,18 @@
           </tr>
         </thead>
         <tbody>
-  <% @orders.each do |order| %>
-    <tr>
-      <td><%= order.id %></td>
-      <td><%= order.user.email %></td>
-      <td><%= number_to_currency(order.total_price) %></td>
-      <td id="order-status-<%= order.id %>"><%= order.status.capitalize %></td>
-      <td>
-        <% if order.status != 'fulfilled' %>
-          <%= button_to "Fulfill", fulfill_order_path(order), method: :patch, class: "btn btn-success btn-sm", remote: true, data: { confirm: "Are you sure you want to fulfill this order?" } %>
-        <% else %>
-          <span class="badge badge-success">Fulfilled</span>
-        <% end %>
-      </td>
-    </tr>
-  <% end %>
-</tbody>
-
+          <% @orders.each do |order| %>
+            <tr>
+              <td><%= order.id %></td>
+              <td><%= order.user.email %></td>
+              <td><%= number_to_currency(order.total_price) %></td>
+              <td><%= order.status.capitalize %></td>
+              <td>
+                <%# <%= link_to "View", admin_order_path(order), class: "btn btn-info btn-sm" %> %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
       </table>
     </div>
     <div class="pagination">

@@ -2,14 +2,13 @@ Rails.application.routes.draw do
   devise_for :users
 
   # Order routes
-  # resources :orders, only: [:show, :create] do
-  #   member do
-  #     post :checkout
-  #     patch :fulfill
-  #   end
-  # end
-  resources :orders, only: [:show, :create]
-  
+  resources :orders, only: [ :show, :create ] do
+    member do
+      post :checkout
+    end
+  end
+
+
   # Product routes with checkout
   resources :products do
     member do
@@ -35,6 +34,7 @@ Rails.application.routes.draw do
     resources :orders, only: [:index]
     resources :users, only: [:index, :show, :destroy] do
       member do
+        patch :fulfill
         patch :make_admin
       end
     end
