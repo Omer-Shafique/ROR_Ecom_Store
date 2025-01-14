@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem "rails", "~> 8.0.1"
+gem "rails", "8.0.1"
 gem "propshaft"
 # gem "sqlite3", ">= 2.1"
 gem "pg"
@@ -11,13 +11,16 @@ gem "stimulus-rails"
 gem "jbuilder"
 gem "aws-sdk-s3", require: false
 gem "will_paginate", "~> 3.3"
+gem "bcrypt_pbkdf", "~> 1.1"
+gem "nokogiri", "~> 1.18"
+
 
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
 
 gem "tzinfo-data", platforms: %i[ windows jruby ]
-gem "solid_cache"
+# gem "solid_cache"
 gem "solid_queue"
 gem "solid_cable"
 gem "bootsnap", require: false

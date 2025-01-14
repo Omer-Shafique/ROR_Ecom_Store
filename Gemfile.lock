@@ -93,7 +93,7 @@ GEM
       aws-eventstream (~> 1, >= 1.0.2)
     base64 (0.2.0)
     bcrypt (3.1.20)
-    bcrypt_pbkdf (1.1.1-x64-mingw-ucrt)
+    bcrypt_pbkdf (1.1.1)
     benchmark (0.4.0)
     bigdecimal (3.1.8)
     bindex (0.8.1)
@@ -194,7 +194,7 @@ GEM
       net-protocol
     net-ssh (7.3.0)
     nio4r (2.7.4)
-    nokogiri (1.17.2-x64-mingw-ucrt)
+    nokogiri (1.18.1-x64-mingw-ucrt)
       racc (~> 1.4)
     orm_adapter (0.5.0)
     ostruct (0.6.1)
@@ -202,7 +202,7 @@ GEM
     parser (3.3.6.0)
       ast (~> 2.4.1)
       racc
-    pg (1.5.9-x64-mingw-ucrt)
+    pg (1.5.9)
     propshaft (1.1.0)
       actionpack (>= 7.0.0)
       activesupport (>= 7.0.0)
@@ -305,10 +305,6 @@ GEM
       activejob (>= 7.2)
       activerecord (>= 7.2)
       railties (>= 7.2)
-    solid_cache (1.0.6)
-      activejob (>= 7.2)
-      activerecord (>= 7.2)
-      railties (>= 7.2)
     solid_queue (1.1.0)
       activejob (>= 7.1)
       activerecord (>= 7.1)
@@ -362,6 +358,7 @@ PLATFORMS
 
 DEPENDENCIES
   aws-sdk-s3
+  bcrypt_pbkdf (~> 1.1)
   bootsnap
   brakeman
   capybara
@@ -371,14 +368,14 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   kamal
+  nokogiri (~> 1.18)
   pg
   propshaft
   puma (>= 5.0)
-  rails (~> 8.0.1)
+  rails (= 8.0.1)
   rubocop-rails-omakase
   selenium-webdriver
   solid_cable
-  solid_cache
   solid_queue
   stimulus-rails
   stripe

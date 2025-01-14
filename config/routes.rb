@@ -9,8 +9,17 @@ Rails.application.routes.draw do
   end
 
 
+  resources :reviews do
+    member do
+      post :like
+    end
+  end
+
+  
   # Product routes with checkout
   resources :products do
+    resources :reviews, only: [:index, :show, :create, :update, :destroy]
+
     member do
       get "checkout"
       post "checkout", to: "products#checkout"

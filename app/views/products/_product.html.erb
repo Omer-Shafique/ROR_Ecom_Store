@@ -1,5 +1,4 @@
-<%# <% if product.user == current_user %>
-  <div class="container mt-5">
+<div class="container mt-5">
     <div class="card shadow-lg p-4" style="border-radius: 12px; background-color: #f9f9f9;">
       <h2 class="text-center text-primary mb-4" style="font-weight: 600; letter-spacing: 0.8px;">Product Details</h2>
 
@@ -74,14 +73,68 @@
         <span class="btn btn-secondary">Out of Stock</span>
         <% end %>
   <% end %>
+        </div>
+
+
+      </div>
+    </div
+  </div>
 </div>
 
 
-        </div>
+<div class="reviews-section mt-5">
+  <h3 class="text-primary mb-4" style="font-weight: bold; letter-spacing: 1px;">Customer Reviews</h3>
+  <% product.reviews.each do |review| %>
+    <div class="review mb-4 p-3 shadow-sm" style="border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;">
+      <p class="mb-2">
+        <strong style="color: #3cb5d0;"><%= review.user.name.present? ? review.user.name : 'Anonymous' %></strong>
+        - 
+        <% 5.times do |i| %>
+          <% if i < review.rating %>
+            <span style="color: #ffc107;">&#9733;</span> <!-- Filled Star -->
+          <% else %>
+            <span style="color: #ddd;">&#9734;</span> <!-- Empty Star -->
+          <% end %>
+        <% end %>
+      </p>
+      <p class="text-muted" style="font-size: 0.95rem;"><%= review.content %></p>
+      <p class="text-secondary" style="font-size: 0.9rem;">Likes: <strong><%= review.likes.count %></strong></p>
+
+      <div class="d-flex gap-3">
+        <% if user_signed_in? && current_user != review.user %>
+          <%= link_to "Like", like_review_path(review), method: :post, class: "btn btn-sm btn-outline-primary" %>
+        <% end %>
+
+        <% if current_user == review.user %>
+          <%= link_to "Delete", review_path(review), method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-sm btn-outline-danger" %>
+        <% end %>
       </div>
     </div>
-  </div>
-<%# <% end %> 
+  <% end %>
+
+  <% if user_signed_in? %>
+    <div class="review-form mt-4 p-4 shadow-sm" style="border: 1px solid #ddd; border-radius: 8px; background-color: #fff;">
+      <h4 class="text-primary mb-3" style="font-weight: bold; letter-spacing: 0.8px;">Write a Review</h4>
+      <%= form_with(model: [product, Review.new], local: true, class: "needs-validation") do |form| %>
+        <div class="mb-3">
+          <%= form.label :rating, "Rating", class: "form-label" %>
+          <%= form.select :rating, [1, 2, 3, 4, 5], {}, class: "form-select" %>
+        </div>
+        <div class="mb-3">
+          <%= form.label :content, "Your Review", class: "form-label" %>
+          <%= form.text_area :content, class: "form-control", rows: 4, placeholder: "Write your thoughts here..." %>
+        </div>
+        <%= form.submit "Submit Review", class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="mt-4 text-center">Please <%= link_to 'sign in', new_user_session_path %> to leave a review.</p>
+  <% end %>
+</div>
+
+
+
+
 
 <br>
 <br>

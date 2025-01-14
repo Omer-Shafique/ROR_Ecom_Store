@@ -3,18 +3,18 @@
 # two user roles, admin user and normal user
 # admin user can create, update, delete products, can also see orders
 # simple user can only see products and add them to wishlist
-
-
-
-
 # reviews on products , other users can see the reviews and ratings and also add reviews and ratings
-# comments on reviews, users can comment on reviews
 # like counts and display the number of likes on reviews
-# user can delete their own reviews and admin can delete any review and cannot edit
 # other user can only like the review once and cannot like their own review
+
+
+
+# user can delete their own reviews and admin can delete any review and cannot edit
+
 
 
 
 
 
 # order tracking for the user, user can see the status of the order
+#code refactoring

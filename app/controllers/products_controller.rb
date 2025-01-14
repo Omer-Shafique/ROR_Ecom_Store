@@ -1,3 +1,92 @@
+# class ProductsController < ApplicationController
+#   include UserAuthorizable
+
+#   before_action :set_product, only: %i[show edit update destroy checkout]
+#   before_action :authenticate_user!, except: [:index, :show]
+
+#   def index
+#     @products = Product.all
+#   end
+
+#   def show
+#     @product = Product.find(params[:id])
+#     @reviews = @product.reviews.includes(:user, :comments, :likes)
+#   end
+
+#   def new
+#     @product = current_user.products.build
+#   end
+
+#   def edit
+#   end
+
+#   def create
+#     service = ProductManagementService.new(current_user, product_params)
+#     @product = service.create
+
+#     if @product
+#       redirect_to @product, notice: "Product was successfully created."
+#     else
+#       render :new
+#     end
+#   end
+
+#   def update
+#     service = ProductManagementService.new(current_user, product_params)
+#     @product = service.update(@product)
+
+#     if @product
+#       redirect_to @product, notice: "Product was successfully updated."
+#     else
+#       render :edit
+#     end
+#   end
+
+#   def destroy
+#     service = ProductManagementService.new(current_user, product_params)
+#     service.destroy(@product)
+
+#     redirect_to products_path, notice: "Product was successfully deleted."
+#   end
+
+#   def checkout
+#     stripe_token = params[:stripeToken]
+#     order_params = {
+#       user_id: current_user.id,
+#       address: params[:address],
+#       phone: params[:phone]
+#     }
+
+#     payment_service = StripePaymentService.new(@product, stripe_token, order_params)
+
+#     begin
+#       @order = payment_service.process_payment
+#       redirect_to order_path(@order), notice: "Payment successful!"
+#     rescue Stripe::CardError => e
+#       flash[:error] = e.message
+#       render 'orders/checkout'
+#     end
+#   end
+
+#   private
+
+#   def set_product
+#     @product = Product.find(params[:id])
+#   end
+
+#   def product_params
+#     params.require(:product).permit(:product_title, :product_description, :product_sku, :stock_quantity_string, :user_id, :price, :stripe_price_id)
+#   end
+# end
+
+
+
+
+
+
+
+
+
 
 class ProductsController < ApplicationController
   before_action :set_product, only: %i[show edit update destroy checkout]
@@ -11,12 +100,19 @@ class ProductsController < ApplicationController
 
   def index
     @products = Product.all
+    # @reviews = @product.reviews
   end
+  
+
+  # def show
+  #   @products = Product.where(user: current_user)
+  # end
 
   def show
-    @products = Product.where(user: current_user)
+    @product = Product.find(params[:id])
+    @reviews = @product.reviews.includes(:user, :comments, :likes) # Preload associations for performance
   end
-
+  
   def new
     @product = current_user.products.build
   end
@@ -125,67 +221,6 @@ class ProductsController < ApplicationController
       render 'orders/checkout'
     end
   end
-  
-  
-
-
-  # def checkout
-  #   @order = Order.find_by(id: params[:order_id]) # Find the existing order if any
-  #   @product.create_or_update_stripe_product
-  #   Stripe.api_key = Rails.configuration.stripe[:secret_key]
-  #   token = params[:stripeToken]
-    
-  #   if token.blank?
-  #     flash[:error] = "Stripe token is missing."
-  #     render 'orders/checkout' and return
-  #   end
-  
-  #   begin
-  #     charge = Stripe::Charge.create(
-  #       amount: (@product.price * 100).to_i,
-  #       currency: 'usd',
-  #       source: token,
-  #       description: "Charge for product #{@product.product_title}"
-  #     )
-  
-  #     # Reduce product quantity in both Stripe and store
-  #     @product.reduce_stripe_quantity
-  
-  #     flash[:success] = "Payment successful!"
-  
-  #     # If @order is nil, create a new order
-  #     unless @order
-  #       @order = Order.create(
-  #         product: @product,
-  #         user: current_user,
-  #         total_price: @product.price
-  #       )
-  #     end
-  
-  #     # Debugging: Check the order status
-  #     Rails.logger.info "Order created: #{@order.inspect}"
-  
-  #     # Ensure the order is saved before redirecting
-  #     if @order.persisted?
-  #       # Debugging: Confirm redirection is about to happen
-  #       Rails.logger.info "Redirecting to order page: #{order_path(@order)}"
-  #       redirect_to order_path(@order)
-  #     else
-  #       flash[:error] = "Order creation failed."
-  #       render 'orders/checkout'
-  #     end
-  
-  #   rescue Stripe::CardError => e
-  #     flash[:error] = e.message
-  #     render 'orders/checkout'
-  #   end
-  # end
-  
-  
-  
-  
-  
-  
 
   private
 
@@ -193,7 +228,17 @@ class ProductsController < ApplicationController
     @product = Product.find(params[:id])
   end
 
+
   def product_params
-    params.require(:product).permit(:product_title, :product_description, :product_sku, :stock_quantity_string, :user_id, :price, :stripe_price_id)
+    params.require(:product).permit(
+      :product_title,
+      :product_description,
+      :product_sku,
+      :stock_quantity_string,
+      :user_id,
+      :price,
+      :stripe_price_id,
+      images: [] 
+    )
   end
 end
