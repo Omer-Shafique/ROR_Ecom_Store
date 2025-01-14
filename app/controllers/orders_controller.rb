@@ -2,23 +2,22 @@ class OrdersController < ApplicationController
   include OrderFinder
 
   def show
+    # @order should be already set by the set_order method
   end
 
   def fulfill
-    service = OrderFulfillmentService.new(@order)
-
-    if service.fulfill
-      respond_to do |format|
-        format.html { redirect_to admin_dashboard_path, notice: "Order ##{@order.id} has been fulfilled." }
-        format.js
-      end
+    @order = Order.find(params[:id])
+  
+    # Attempt to update the status
+    if @order.update(status: 'Fulfilled')
+      render json: { message: 'Order status updated to Fulfilled.' }, status: :ok
     else
-      respond_to do |format|
-        format.html { redirect_to admin_dashboard_path, alert: "Failed to fulfill Order ##{@order.id}." }
-        format.js { render js: "alert('Failed to fulfill the order.');" }
-      end
+      # Log validation errors to help debug
+      logger.error "Failed to update order: #{@order.errors.full_messages}"
+      render json: { error: @order.errors.full_messages.join(", ") }, status: :unprocessable_entity
     end
   end
+  
 
   def checkout
     stripe_token = params[:stripeToken]

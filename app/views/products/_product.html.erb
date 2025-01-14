@@ -105,7 +105,7 @@
           <%= link_to "Like", like_review_path(review), method: :post, class: "btn btn-sm btn-outline-primary" %>
         <% end %>
 
-        <% if current_user == review.user %>
+        <% if current_user == review.user || current_user.admin? %> <!-- Allow admin or review owner to delete -->
           <%= link_to "Delete", review_path(review), method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-sm btn-outline-danger" %>
         <% end %>
       </div>
@@ -113,24 +113,34 @@
   <% end %>
 
   <% if user_signed_in? %>
-    <div class="review-form mt-4 p-4 shadow-sm" style="border: 1px solid #ddd; border-radius: 8px; background-color: #fff;">
-      <h4 class="text-primary mb-3" style="font-weight: bold; letter-spacing: 0.8px;">Write a Review</h4>
-      <%= form_with(model: [product, Review.new], local: true, class: "needs-validation") do |form| %>
-        <div class="mb-3">
-          <%= form.label :rating, "Rating", class: "form-label" %>
-          <%= form.select :rating, [1, 2, 3, 4, 5], {}, class: "form-select" %>
+  <div class="review-form mt-4 p-4 shadow-sm" style="border: 1px solid #ddd; border-radius: 8px; background-color: #fff;">
+    <h4 class="text-primary mb-3" style="font-weight: bold; letter-spacing: 0.8px;">Write a Review</h4>
+    <%= form_with(model: [product, Review.new], local: true, class: "needs-validation") do |form| %>
+      <div class="mb-3">
+        <%= form.label :rating, "Rating", class: "form-label" %>
+        <div class="star-rating">
+          <% 5.times do |i| %>
+            <%= radio_button_tag 'review[rating]', i+1, false, id: "rating_#{i+1}", class: 'star-input' %>
+            <label for="rating_<%= i+1 %>" class="star-label">&#9733;</label> <!-- Filled Star -->
+          <% end %>
         </div>
-        <div class="mb-3">
-          <%= form.label :content, "Your Review", class: "form-label" %>
-          <%= form.text_area :content, class: "form-control", rows: 4, placeholder: "Write your thoughts here..." %>
-        </div>
-        <%= form.submit "Submit Review", class: "btn btn-primary" %>
-      <% end %>
-    </div>
-  <% else %>
-    <p class="mt-4 text-center">Please <%= link_to 'sign in', new_user_session_path %> to leave a review.</p>
-  <% end %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :content, "Your Review", class: "form-label" %>
+        <%= form.text_area :content, class: "form-control", rows: 4, placeholder: "Write your thoughts here..." %>
+      </div>
+
+      <%= form.submit "Submit Review", class: "btn btn-primary" %>
+    <% end %>
+  </div>
+<% else %>
+  <p class="mt-4 text-center">Please <%= link_to 'sign in', new_user_session_path %> to leave a review.</p>
+<% end %>
+
+
 </div>
+
 
 
 
@@ -146,4 +156,31 @@
     height: 400px; 
     object-fit: cover; 
   }
+
+  .star-rating {
+  display: inline-flex;
+  gap: 5px;
+  direction: rtl;
+}
+
+.star-input {
+  display: none;
+}
+
+.star-label {
+  font-size: 1.5rem;
+  color: #ddd;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.star-input:checked ~ .star-label {
+  color: #ffc107; /* Golden color for selected stars */
+}
+
+.star-input:hover ~ .star-label,
+.star-label:hover {
+  color: #ffc107;
+}
+
 </style>

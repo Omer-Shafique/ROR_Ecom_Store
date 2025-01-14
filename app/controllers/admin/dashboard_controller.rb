@@ -4,7 +4,9 @@ class Admin::DashboardController < ApplicationController
 
   def index
     # @orders = Order.includes(:user).all
-    @orders = Order.paginate(page: params[:page], per_page: 5)
+    # @orders = Order.includes(:products).all
+    @orders = Order.includes(:product, :user).all
+    @orders = Order.paginate(page: params[:page], per_page: 20)
     @users = User.all
   end
 

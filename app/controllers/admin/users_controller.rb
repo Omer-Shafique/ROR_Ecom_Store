@@ -63,25 +63,17 @@ class Admin::UsersController < ApplicationController
 
   # Action to promote user to admin
   def make_admin
-    @user = User.find(params[:id])
-  
-    if @user.admin?
-      redirect_to admin_dashboard_path, alert: "This user is already an admin."
+    user = User.find(params[:id])
+    if user.update(admin: true)
+      redirect_to admin_dashboard_path, notice: "#{user.name} is now an admin."
     else
-      if @user.update(admin: true)
-        logger.debug "User promoted to admin: #{@user.inspect}"  # Debugging line
-        redirect_to admin_dashboard_path, notice: "User has been promoted to Admin."
-      else
-        logger.debug "Error promoting user: #{@user.errors.full_messages}"  # Debugging line
-        redirect_to admin_dashboard_path, alert: "Failed to promote user."
-      end
+      redirect_to admin_dashboard_path, alert: "Failed to make #{user.name} an admin."
     end
   end
-  
-
-  private
 
   # Ensure only admins can access this controller
+  private
+
   def authorize_admin!
     unless current_user.admin?
       redirect_to root_path, alert: "You are not authorized to access this page."

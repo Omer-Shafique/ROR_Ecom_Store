@@ -6,9 +6,6 @@
 # reviews on products , other users can see the reviews and ratings and also add reviews and ratings
 # like counts and display the number of likes on reviews
 # other user can only like the review once and cannot like their own review
-
-
-
 # user can delete their own reviews and admin can delete any review and cannot edit
 
 

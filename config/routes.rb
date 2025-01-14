@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   resources :orders, only: [ :show, :create ] do
     member do
       post :checkout
+      patch 'fulfill'
     end
   end
 
@@ -40,13 +41,22 @@ Rails.application.routes.draw do
 
   namespace :admin do
     get 'dashboard', to: 'dashboard#index'
-    resources :orders, only: [:index]
-    resources :users, only: [:index, :show, :destroy] do
+  
+    # Orders routes with only index and fulfill action
+    resources :orders, only: [:index] do
       member do
         patch :fulfill
+        patch :out_for_delivery
+        patch :delivered
+      end
+    end
+  
+    # Users routes with index, show, and destroy actions
+    resources :users, only: [:index, :show, :destroy] do
+      member do
         patch :make_admin
       end
     end
-    resources :dashboard, only: [:index]
   end
+  
 end
