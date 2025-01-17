@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_10_230122) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_16_174026) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -74,6 +74,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_10_230122) do
     t.string "phone"
     t.text "address"
     t.string "customer_name"
+    t.text "status_updates"
     t.index ["product_id"], name: "index_orders_on_product_id"
   end
 
@@ -114,8 +115,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_10_230122) do
     t.string "role"
     t.boolean "admin", default: false
     t.string "name"
+    t.string "first_name"
+    t.string "last_name"
+    t.date "date_of_birth"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "wishlist_products", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "product_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_wishlist_products_on_product_id"
+    t.index ["user_id"], name: "index_wishlist_products_on_user_id"
   end
 
   create_table "wishlists", force: :cascade do |t|
@@ -133,9 +146,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_10_230122) do
   add_foreign_key "comments", "users"
   add_foreign_key "likes", "reviews"
   add_foreign_key "likes", "users"
-  add_foreign_key "orders", "products"
+  add_foreign_key "orders", "products", on_delete: :cascade
   add_foreign_key "reviews", "products"
   add_foreign_key "reviews", "users"
+  add_foreign_key "wishlist_products", "products"
+  add_foreign_key "wishlist_products", "users"
   add_foreign_key "wishlists", "products"
   add_foreign_key "wishlists", "users"
 end

@@ -13,6 +13,9 @@ gem "aws-sdk-s3", require: false
 gem "will_paginate", "~> 3.3"
 gem "bcrypt_pbkdf", "~> 1.1"
 gem "nokogiri", "~> 1.18"
+gem 'pg_search'
+
+
 
 
 

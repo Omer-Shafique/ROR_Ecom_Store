@@ -1,4 +1,6 @@
 <%= form_with(model: product, class: "product-form shadow-lg p-4 rounded") do |form| %>
+
+  <!-- Error Display -->
   <% if product.errors.any? %>
     <div class="alert alert-danger mb-4">
       <h4 class="alert-heading"><%= pluralize(product.errors.count, "error") %> prohibited this product from being saved:</h4>
@@ -10,38 +12,36 @@
     </div>
   <% end %>
 
-  <div class="form-group mb-3">
-    <%= form.text_field :product_title, class: "form-control form-control-lg shadow-sm", placeholder: "Enter Product Title", aria: { label: "Product Title" } %>
-  </div>
+  <!-- Form Fields -->
+  <% fields = [
+      { field: :product_title, type: :text_field, placeholder: "Enter Product Title" },
+      { field: :product_description, type: :text_area, placeholder: "Enter Product Description", rows: 4 },
+      { field: :product_sku, type: :text_field, placeholder: "Enter Product SKU" },
+      { field: :stock_quantity_string, type: :text_field, placeholder: "Enter Stock Quantity" },
+      { field: :price, type: :text_field, placeholder: "Enter Product Price" }
+    ] %>
 
-  <div class="form-group mb-3">
-    <%= form.text_area :product_description, class: "form-control form-control-lg shadow-sm", placeholder: "Enter Product Description", rows: 4, aria: { label: "Product Description" } %>
-  </div>
-
-  <div class="form-group mb-3">
-    <%= form.text_field :product_sku, class: "form-control form-control-lg shadow-sm", placeholder: "Enter Product SKU", aria: { label: "Product SKU" } %>
-  </div>
-
-  <div class="form-group mb-3">
-    <%= form.text_field :stock_quantity_string, class: "form-control form-control-lg shadow-sm", placeholder: "Enter Stock Quantity", aria: { label: "Stock Quantity" } %>
-  </div>
-
-  <div class="form-group mb-3">
-    <%= form.number_field :user_id, id: :product_user_id, class: "form-control form-control-lg shadow-sm", value: current_user.id, type: "hidden" %>
-  </div>
-
-  <div class="form-group mb-3">
-    <%= form.text_field :price, class: "form-control form-control-lg shadow-sm", placeholder: "Enter Product Price", aria: { label: "Product Price" } %>
-  </div>
-
+  <% fields.each do |field| %>
     <div class="form-group mb-3">
-  <%= form.label :images, "Upload Product Images", class: "form-label" %>
-  <%= form.file_field :images, class: "form-control form-control-lg shadow-sm", multiple: true , aria: { label: "Product Images" } %>
-</div>
+      <%= form.send(field[:type], field[:field], 
+                    class: "form-control form-control-lg shadow-sm", 
+                    placeholder: field[:placeholder], 
+                    aria: { label: field[:field].to_s.humanize }, 
+                    rows: field[:rows]) %>
+    </div>
+  <% end %>
 
+  <!-- Hidden Field for User ID -->
+  <%= form.hidden_field :user_id, value: current_user.id %>
 
+  <!-- File Upload Field -->
+  <div class="form-group mb-3">
+    <%= form.label :images, "Upload Product Images", class: "form-label" %>
+    <%= form.file_field :images, class: "form-control form-control-lg shadow-sm", multiple: true, aria: { label: "Product Images" } %>
+  </div>
 
+  <!-- Submit Button -->
   <div class="text-center">
-    <%= form.submit "Save Product", class: "btn btn-success btn-lg px-5 py-3  shadow-sm" %>
+    <%= form.submit "Save Product", class: "btn btn-success btn-lg px-5 py-3 shadow-sm" %>
   </div>
 <% end %>

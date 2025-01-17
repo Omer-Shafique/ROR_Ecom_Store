@@ -16,8 +16,8 @@
     <%= javascript_include_tag 'rails-ujs' %>
 
     <%= yield :head %>
-    <%# <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
-    <%= favicon_link_tag 'favicon.png', type: 'image/png' %>
+    <%# <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %> 
+   <%# <%= favicon_link_tag 'favicon.png', type: 'image/png'  %> 
   </head>
   <body>
     
@@ -110,3 +110,35 @@
   }
   
   </style>
+
+
+<script>
+
+// app/javascript/packs/application.js or a separate js file
+document.addEventListener('turbo:load', () => {
+  const searchInput = document.getElementById('search-input');
+
+  if (searchInput) {
+    searchInput.addEventListener('input', function() {
+      const query = this.value;
+
+      if (query.length > 2) {  // Start searching after 3 characters
+        fetch(`/products/search?query=${query}`, {
+          method: 'GET',
+          headers: {
+            'Accept': 'text/html',
+            'X-Requested-With': 'XMLHttpRequest',
+          }
+        })
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('search-results').innerHTML = data;
+        });
+      } else {
+        document.getElementById('search-results').innerHTML = '';  // Clear results if query is empty or short
+      }
+    });
+  }
+});
+
+</script>

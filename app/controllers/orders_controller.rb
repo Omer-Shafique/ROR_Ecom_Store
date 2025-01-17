@@ -1,24 +1,15 @@
 class OrdersController < ApplicationController
   include OrderFinder
+  before_action :authenticate_user!
+
+  def index
+    @orders = current_user.orders 
+  end
 
   def show
-    # @order should be already set by the set_order method
-  end
-
-  def fulfill
-    @order = Order.find(params[:id])
-  
-    # Attempt to update the status
-    if @order.update(status: 'Fulfilled')
-      render json: { message: 'Order status updated to Fulfilled.' }, status: :ok
-    else
-      # Log validation errors to help debug
-      logger.error "Failed to update order: #{@order.errors.full_messages}"
-      render json: { error: @order.errors.full_messages.join(", ") }, status: :unprocessable_entity
-    end
+    @order = current_user.orders.find(params[:id])
   end
   
-
   def checkout
     stripe_token = params[:stripeToken]
     order_params = {

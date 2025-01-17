@@ -1,0 +1,20 @@
+<div class="review">
+  <p><strong><%= review.user.email %>:</strong> <%= review.content %></p>
+  <p>Rating: <%= review.rating %></p>
+
+  <h5>Comments:</h5>
+  <ul>
+    <% review.comments.each do |comment| %>
+      <li><strong><%= "#{comment.user.first_name} #{comment.user.last_name}" %>:</strong> <%= comment.content %></li>
+
+    <% end %>
+  </ul>
+
+  <%= form_with(model: [review, Comment.new], local: true) do |form| %>
+    <div class="form-group">
+      <%= form.label :content, "Add a comment" %>
+      <%= form.text_area :content, class: "form-control", rows: 3 %>
+    </div>
+    <%= form.submit "Submit", class: "btn btn-primary mt-2" %>
+  <% end %>
+</div>

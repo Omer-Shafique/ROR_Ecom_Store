@@ -3,7 +3,6 @@ class UserService
     @user = user
   end
 
-  # Delete a user, ensuring admin users cannot be deleted
   def delete_user
     if @user.admin?
       { success: false, message: "You cannot delete an admin user." }
@@ -14,7 +13,6 @@ class UserService
     end
   end
 
-  # Promote a user to admin
   def promote_to_admin
     if @user.admin?
       { success: false, message: "This user is already an admin." }

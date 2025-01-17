@@ -5,20 +5,17 @@ class OrderService
     @order_params = order_params
     @stripe_token = stripe_token
   end
-
+  
   def create_order
     raise "Order params are missing" unless @order_params
-
     customer = create_stripe_customer
     order = build_order(customer)
-
     if order.save
       order
     else
       raise StandardError, "Failed to create order."
     end
   end
-
 
   def create_or_fetch_order
     order = Order.find_by(product_id: @product.id, user_id: @user.id)
@@ -33,6 +30,7 @@ class OrderService
 
   private
 
+
   def build_order(customer)
     Order.new(
       product: @product,
@@ -46,12 +44,8 @@ class OrderService
 
   def charge_and_create_customer(order)
     return unless @stripe_token
-
-    # Ensure the payment is processed
     charge_service = StripeChargeService.new(@product, @stripe_token)
     charge = charge_service.process_payment
-
-    # If payment succeeded, save the order
     if charge.status == 'succeeded' && order.save
       create_stripe_customer(order)
     else
@@ -61,10 +55,8 @@ class OrderService
 
   private
 
-  # Create a Stripe customer and associate it with the order
   def create_stripe_customer(order)
     customer = Stripe::Customer.create(
-      # name: @user.name,
       email: @order_params[:email],
       address: @order_params[:address],
       phone: @order_params[:phone],

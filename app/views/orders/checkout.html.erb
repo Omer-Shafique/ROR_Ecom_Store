@@ -2,75 +2,24 @@
 
 <h1 class="page-title">Checkout for <%= @product.product_title %></h1>
 
-<% if flash[:success] %>
-  <div class="alert alert-success"><%= flash[:success] %></div>
-<% elsif flash[:error] %>
-  <div class="alert alert-danger"><%= flash[:error] %></div>
-<% end %>
+<%= render 'shared/flash_messages' %>
 
 <div class="checkout-container">
-  <!-- Product Details Table (Left Side) -->
+  <!-- Product Details -->
   <div class="product-details">
     <h2 class="section-title">Product Details</h2>
-    <table class="table table-striped">
-      <tr>
-        <th>Description</th>
-        <td><%= @product.product_description %></td>
-      </tr>
-      <tr>
-        <th>SKU</th>
-        <td><%= @product.product_sku %></td>
-      </tr>
-      <tr>
-        <th>Stock Quantity</th>
-        <td><%= @product.stock_quantity_string %></td>
-      </tr>
-      <tr>
-        <th>Price</th>
-        <td><%= number_to_currency(@product.price) %></td>
-      </tr>
-    </table>
+    <%= render 'orders/product_details', product: @product %>
   </div>
 
-  <!-- Checkout Form (Right Side) -->
+  <!-- Checkout Form -->
   <div class="checkout-form">
     <h2 class="section-title">Checkout</h2>
-
-    <%= form_with url: checkout_product_path(@product), method: :post, local: true do |f| %>
-      <div class="form-group">
-        <%= f.label :name, "Your Name", class: "font-weight-bold" %>
-        <%= f.text_field :name, class: "form-control", required: true %>
-      </div>
-
-      <div class="form-group">
-        <%= f.label :email, "Your Email", class: "font-weight-bold" %>
-        <%= f.email_field :email, class: "form-control", required: true %>
-      </div>
-
-      <div class="form-group">
-        <%= f.label :address, "Your Address", class: "font-weight-bold" %>
-        <%= f.text_field :address, class: "form-control", required: true %>
-      </div>
-
-      <div class="form-group">
-        <%= f.label :phone, "Your Phone", class: "font-weight-bold" %>
-        <%= f.text_field :phone, class: "form-control", required: true %>
-      </div>
-
-      <div class="form-group">
-        <label for="card-element" class="font-weight-bold" aria-label="Enter credit or debit card details">
-          Credit or Debit Card
-        </label>
-        <div id="card-element" class="form-control">
-          <!-- A Stripe Element will be inserted here -->
-        </div>
-        <small id="card-errors" class="text-danger mt-1" role="alert"></small>
-      </div>
-
-      <%= f.submit "Pay Now", class: "btn btn-primary btn-block mt-4" %>
-    <% end %>
+    <%= render 'orders/checkout_form', product: @product %>
   </div>
 </div>
+
+
+
 
 <script src="https://js.stripe.com/v3/"></script>
 <script>

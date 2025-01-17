@@ -1,0 +1,18 @@
+<table class="table table-striped">
+  <tr>
+    <th>Description</th>
+    <td><%= product.product_description %></td>
+  </tr>
+  <tr>
+    <th>SKU</th>
+    <td><%= product.product_sku %></td>
+  </tr>
+  <tr>
+    <th>Stock Quantity</th>
+    <td><%= product.stock_quantity_string %></td>
+  </tr>
+  <tr>
+    <th>Price</th>
+    <td><%= number_to_currency(product.price) %></td>
+  </tr>
+</table>

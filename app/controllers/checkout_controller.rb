@@ -6,7 +6,6 @@ class CheckoutController < ApplicationController
 
   def create
     @stripe_token = params[:stripeToken]
-
     begin
       charge = StripePaymentService.new(@product, @stripe_token).process_payment
 
@@ -23,6 +22,7 @@ class CheckoutController < ApplicationController
       render :new
     end
   end
+  
 end
 
 

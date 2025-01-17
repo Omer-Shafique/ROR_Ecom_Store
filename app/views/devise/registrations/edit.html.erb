@@ -1,12 +1,23 @@
-<div class="container vh-100 d-flex align-items-center justify-content-center my-5">
+<div class="container d-flex align-items-center justify-content-center my-5">
   <div class="card p-4 shadow-lg" style="max-width: 600px; width: 100%; border-radius: 15px;">
     <h2 class="text-center text-primary mb-4">Edit Profile</h2>
 
     <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
       <%= render "devise/shared/error_messages", resource: resource %>
 
+      <!-- First Name Field -->
       <div class="field form-group my-3">
-        <%= f.email_field :email, autofocus: true, placeholder: "Email", autocomplete: "email", class: "form-control  shadow-sm" %>
+        <%= f.text_field :first_name, value: resource.first_name, placeholder: "First Name", class: "form-control shadow-sm rounded-pill" %>
+      </div>
+
+      <!-- Last Name Field -->
+      <div class="field form-group my-3">
+        <%= f.text_field :last_name, value: resource.last_name, placeholder: "Last Name", class: "form-control shadow-sm rounded-pill" %>
+      </div>
+
+      <!-- Email Field -->
+      <div class="field form-group my-3">
+        <%= f.email_field :email, autofocus: true, placeholder: "Email", autocomplete: "email", class: "form-control shadow-sm rounded-pill" %>
       </div>
 
       <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
@@ -15,23 +26,26 @@
         </div>
       <% end %>
 
+      <!-- Password Field -->
       <div class="field form-group my-3">
-        <%= f.password_field :password, autocomplete: "new-password", placeholder: "Password (leave blank if you don't want to change it)", class: "form-control  shadow-sm" %>
+        <%= f.password_field :password, autocomplete: "new-password", placeholder: "Password (leave blank if you don't want to change it)", class: "form-control shadow-sm rounded-pill" %>
         <% if @minimum_password_length %>
           <small class="text-muted"><%= @minimum_password_length %> characters minimum</small>
         <% end %>
       </div>
 
+      <!-- Password Confirmation -->
       <div class="field form-group my-3">
-        <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: "Confirm Password", class: "form-control  shadow-sm" %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: "Confirm Password", class: "form-control shadow-sm rounded-pill" %>
       </div>
 
+      <!-- Current Password -->
       <div class="field form-group my-3">
-        <%= f.password_field :current_password, autocomplete: "current-password", placeholder: "Enter Your Current Password To Update The Changes", class: "form-control  shadow-sm" %>
+        <%= f.password_field :current_password, autocomplete: "current-password", placeholder: "Enter Your Current Password To Update The Changes", class: "form-control shadow-sm rounded-pill" %>
       </div>
 
       <div class="actions text-center mt-4">
-        <%= f.submit "Update", class: "btn btn-success btn-lg w-100 shadow-sm " %>
+        <%= f.submit "Update Profile", class: "btn btn-primary btn-lg w-100 shadow-sm rounded-pill" %>
       </div>
     <% end %>
 
@@ -40,8 +54,8 @@
         <h3 class="card-title text-danger">Delete My Account</h3>
         <p class="card-text text-muted mb-4">Unhappy? We’re sorry to see you go. Please confirm if you wish to delete your account.</p>
         <div class="d-flex justify-content-between">
-          <%= button_to "Delete My Account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete, class: "btn btn-danger shadow-sm" %>
-          <%= link_to "Back", :back, class: "btn btn-primary shadow-sm" %>
+          <%= button_to "Delete My Account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete, class: "btn btn-danger shadow-sm rounded-pill" %>
+          <%= link_to "Back", :back, class: "btn btn-outline-primary shadow-sm rounded-pill" %>
         </div>
       </div>
     </div>

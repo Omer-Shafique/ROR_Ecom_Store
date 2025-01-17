@@ -83,63 +83,108 @@
 
 
 <div class="reviews-section mt-5">
-  <h3 class="text-primary mb-4" style="font-weight: bold; letter-spacing: 1px;">Customer Reviews</h3>
-  <% product.reviews.each do |review| %>
-    <div class="review mb-4 p-3 shadow-sm" style="border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;">
-      <p class="mb-2">
-        <strong style="color: #3cb5d0;"><%= review.user.name.present? ? review.user.name : 'Anonymous' %></strong>
-        - 
-        <% 5.times do |i| %>
-          <% if i < review.rating %>
-            <span style="color: #ffc107;">&#9733;</span> <!-- Filled Star -->
-          <% else %>
-            <span style="color: #ddd;">&#9734;</span> <!-- Empty Star -->
-          <% end %>
-        <% end %>
-      </p>
-      <p class="text-muted" style="font-size: 0.95rem;"><%= review.content %></p>
-      <p class="text-secondary" style="font-size: 0.9rem;">Likes: <strong><%= review.likes.count %></strong></p>
+  <h3 class="text-primary mb-4" style="font-weight: 600; letter-spacing: 1px;">Customer Reviews</h3>
+  <div class="row">
+    <% product.reviews.each_with_index do |review, index| %>
+      <% if index % 3 == 0 && index != 0 %>
+        </div><div class="row">
+      <% end %>
+      <div class="col-md-4 mb-4">
+        <div class="review p-3 shadow-sm" style="border: none; border-radius: 12px; background-color: #f8f9fa; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); transition: transform 0.3s;">
+          <p class="mb-2">
+            <strong style="color: #007bff; font-weight: 500;">
+              <%= review.user.first_name.present? && review.user.last_name.present? ? "#{review.user.first_name} #{review.user.last_name}" : 'Anonymous' %>
+            </strong>
 
-      <div class="d-flex gap-3">
-        <% if user_signed_in? && current_user != review.user %>
-          <%= link_to "Like", like_review_path(review), method: :post, class: "btn btn-sm btn-outline-primary" %>
-        <% end %>
+            - 
+            <% 5.times do |i| %>
+              <% if i < (review.rating || 0) %>  <!-- Default to 0 if review.rating is nil -->
+                <span style="color: #ffcc00;">&#9733;</span> <!-- Filled Star -->
+              <% else %>
+                <span style="color: #ccc;">&#9734;</span> <!-- Empty Star -->
+              <% end %>
+            <% end %>
 
-        <% if current_user == review.user || current_user.admin? %> <!-- Allow admin or review owner to delete -->
-          <%= link_to "Delete", review_path(review), method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-sm btn-outline-danger" %>
-        <% end %>
-      </div>
-    </div>
-  <% end %>
+          </p>
+          <p class="text-muted" style="font-size: 0.95rem; line-height: 1.4;"><%= review.content %></p>
+          <p class="text-secondary" style="font-size: 0.9rem;">Likes: <strong><%= review.likes.count %></strong></p>
 
-  <% if user_signed_in? %>
-  <div class="review-form mt-4 p-4 shadow-sm" style="border: 1px solid #ddd; border-radius: 8px; background-color: #fff;">
-    <h4 class="text-primary mb-3" style="font-weight: bold; letter-spacing: 0.8px;">Write a Review</h4>
-    <%= form_with(model: [product, Review.new], local: true, class: "needs-validation") do |form| %>
-      <div class="mb-3">
-        <%= form.label :rating, "Rating", class: "form-label" %>
-        <div class="star-rating">
-          <% 5.times do |i| %>
-            <%= radio_button_tag 'review[rating]', i+1, false, id: "rating_#{i+1}", class: 'star-input' %>
-            <label for="rating_<%= i+1 %>" class="star-label">&#9733;</label> <!-- Filled Star -->
-          <% end %>
+          <div class="d-flex gap-3">
+            <% if user_signed_in? && current_user != review.user %>
+              <%= link_to "Like", like_review_path(review), method: :post, class: "btn btn-sm btn-outline-primary" %>
+            <% end %>
+
+            <% if current_user == review.user || current_user.admin? %> <!-- Allow admin or review owner to delete -->
+              <%= link_to "Delete", review_path(review), method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-sm btn-outline-danger" %>
+            <% end %>
+          </div>
+
+          <div class="comments mt-2">
+            <% review.comments.each_with_index do |comment, index| %>
+              <div class="comment mb-1 p-2 shadow-sm position-relative" style="padding-right:20px !important; border: none; border-radius: 8px; background-color: #f1f1f1; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                <!-- Delete Button -->
+                 <% if current_user == comment.user || current_user.admin? %>
+                  <%= link_to "&#10005;".html_safe, review_comment_path(comment.review_id, comment), method: :delete, 
+                              data: { confirm: 'Are you sure?' }, 
+                              class: "btn btn-outline-danger btn-sm rounded-circle delete-icon",
+                              style: "width: 20px; height: 20px; font-size: 12px; padding: 0; line-height: 16px; position: absolute; top: 5px; right: 5px;" %> 
+                <% end %>
+
+                <!-- Comment Content -->
+                <p class="mb-1" style="font-size: 0.85rem;">
+                  <strong style="color: #007bff; font-weight: 500;">
+                    <%= comment.user.first_name.present? && comment.user.last_name.present? ? "#{comment.user.first_name} #{comment.user.last_name}" : 'Anonymous' %>
+                  </strong>
+                  <%= comment.content %>
+                </p>
+                <p class="text-muted" style="font-size: 0.7rem; color: #6c757d; margin-bottom: 0;"><%= time_ago_in_words(comment.created_at) %> ago</p>
+              </div>
+
+            <% end %>
+
+            <% if user_signed_in? %>
+              <%= form_with(model: [review, Comment.new], local: true, class: "mt-2") do |form| %>
+                <div class="mb-1">
+                  <%= form.text_area :content, class: "form-control", rows: 1, placeholder: "Add a comment..." %>
+                </div>
+                <%= form.submit "Add", class: "btn btn-sm btn-primary my-1" %>
+              <% end %>
+            <% else %>
+              <p>Please <%= link_to 'sign in', new_user_session_path %> to add a comment.</p>
+            <% end %>
+          </div>
         </div>
       </div>
-
-      <div class="mb-3">
-        <%= form.label :content, "Your Review", class: "form-label" %>
-        <%= form.text_area :content, class: "form-control", rows: 4, placeholder: "Write your thoughts here..." %>
-      </div>
-
-      <%= form.submit "Submit Review", class: "btn btn-primary" %>
     <% end %>
   </div>
-<% else %>
-  <p class="mt-4 text-center">Please <%= link_to 'sign in', new_user_session_path %> to leave a review.</p>
-<% end %>
 
+  <% if user_signed_in? %>
+    <div class="review-form mt-4 p-4 shadow-sm" style="border: none; border-radius: 12px; background-color: #fff; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+      <h4 class="text-primary mb-3" style="font-weight: 600; letter-spacing: 0.8px;">Write a Review</h4>
+      <%= form_with(model: [product, Review.new], local: true, class: "needs-validation") do |form| %>
+        <div class="mb-3">
+          <%= form.label :rating, "Rating", class: "form-label" %>
+          <div class="star-rating">
+            <% 5.times do |i| %>
+              <%= radio_button_tag 'review[rating]', i+1, false, id: "rating_#{i+1}", class: 'star-input' %>
+              <label for="rating_<%= i+1 %>" class="star-label">&#9733;</label> <!-- Filled Star -->
+            <% end %>
+          </div>
+        </div>
 
+        <div class="mb-3">
+          <%= form.label :content, "Your Review", class: "form-label" %>
+          <%= form.text_area :content, class: "form-control", rows: 4, placeholder: "Write your thoughts here..." %>
+        </div>
+
+        <%= form.submit "Submit Review", class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="mt-4 text-center">Please <%= link_to 'sign in', new_user_session_path %> to leave a review.</p>
+  <% end %>
 </div>
+
 
 
 
@@ -182,5 +227,35 @@
 .star-label:hover {
   color: #ffc107;
 }
+
+
+.comment {
+  position: relative;
+  border: none;
+  border-radius: 8px;
+  background-color: #f1f1f1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.delete-icon {
+  width: 10px;
+  height: 10px;
+  font-size: 12px;
+  font-weight:bold;
+  padding: 0;
+  line-height: 16px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  border: 2px solid #dc3545; /* Red border */
+  background-color: #dc3545;
+  color: white;
+  border-radius: 50%;
+  transition: all 0.3s ease; 
+  margin-top:5px;
+}
+
+
+
 
 </style>

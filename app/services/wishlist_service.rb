@@ -4,7 +4,7 @@ class WishlistService
   end
 
   def fetch_wishlist
-    @user.wishlist_products
+    @user.wishlist_products.includes(:product).map(&:product)
   end
 
   def add_to_wishlist(product)

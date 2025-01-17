@@ -1,0 +1,33 @@
+<%= form_with url: checkout_product_path(product), method: :post, local: true do |f| %>
+  <div class="form-group">
+    <%= f.label :name, "Your Name", class: "font-weight-bold" %>
+    <%= f.text_field :name, class: "form-control", required: true %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :email, "Your Email", class: "font-weight-bold" %>
+    <%= f.email_field :email, class: "form-control", required: true %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :address, "Your Address", class: "font-weight-bold" %>
+    <%= f.text_field :address, class: "form-control", required: true %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :phone, "Your Phone", class: "font-weight-bold" %>
+    <%= f.text_field :phone, class: "form-control", required: true %>
+  </div>
+
+  <div class="form-group">
+    <label for="card-element" class="font-weight-bold" aria-label="Enter credit or debit card details">
+      Credit or Debit Card
+    </label>
+    <div id="card-element" class="form-control">
+      <!-- A Stripe Element will be inserted here -->
+    </div>
+    <small id="card-errors" class="text-danger mt-1" role="alert"></small>
+  </div>
+
+  <%= f.submit "Pay Now", class: "btn btn-primary btn-block mt-4" %>
+<% end %>
