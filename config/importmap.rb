@@ -1,1 +1,3 @@
-pin "rails-ujs", to: "https://cdnjs.cloudflare.com/ajax/libs/rails-ujs/6.1.4/rails-ujs.min.js"
+pin "application"
+pin "@hotwired/turbo-rails", to: "turbo.min.js", preload: true
+pin "@rails/ujs", to: "rails-ujs.min.js", preload: true

@@ -120,39 +120,43 @@
           </div>
 
           <div class="comments mt-2">
-            <% review.comments.each_with_index do |comment, index| %>
-              <div class="comment mb-1 p-2 shadow-sm position-relative" style="padding-right:20px !important; border: none; border-radius: 8px; background-color: #f1f1f1; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-                <!-- Delete Button -->
-                 <% if current_user == comment.user || current_user.admin? %>
-                  <%= link_to "&#10005;".html_safe, review_comment_path(comment.review_id, comment), method: :delete, 
-                              data: { confirm: 'Are you sure?' }, 
-                              class: "btn btn-outline-danger btn-sm rounded-circle delete-icon",
-                              style: "width: 20px; height: 20px; font-size: 12px; padding: 0; line-height: 16px; position: absolute; top: 5px; right: 5px;" %> 
-                <% end %>
+  <% review.comments.each do |comment| %>
+    <div  id="comment-<%= comment.id %>" class="comment mb-1 p-2 shadow-sm position-relative" style="padding-right:20px !important; border: none; border-radius: 8px; background-color: #f1f1f1; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+      <!-- Delete Button -->
+      <% if current_user == comment.user || current_user.admin? %>
+      <%= link_to "&#10005;".html_safe, review_comment_path(review, comment), method: :delete, 
+            remote: true, 
+            data: { confirm: 'Are you sure?' }, 
+            class: "btn btn-outline-danger btn-sm rounded-circle delete-icon",
+            style: "width: 20px; height: 20px; font-size: 12px; padding: 0; line-height: 16px; position: absolute; top: 5px; right: 5px;" %> 
+      <%end%>
 
-                <!-- Comment Content -->
-                <p class="mb-1" style="font-size: 0.85rem;">
-                  <strong style="color: #007bff; font-weight: 500;">
-                    <%= comment.user.first_name.present? && comment.user.last_name.present? ? "#{comment.user.first_name} #{comment.user.last_name}" : 'Anonymous' %>
-                  </strong>
-                  <%= comment.content %>
-                </p>
-                <p class="text-muted" style="font-size: 0.7rem; color: #6c757d; margin-bottom: 0;"><%= time_ago_in_words(comment.created_at) %> ago</p>
-              </div>
 
-            <% end %>
 
-            <% if user_signed_in? %>
-              <%= form_with(model: [review, Comment.new], local: true, class: "mt-2") do |form| %>
-                <div class="mb-1">
-                  <%= form.text_area :content, class: "form-control", rows: 1, placeholder: "Add a comment..." %>
-                </div>
-                <%= form.submit "Add", class: "btn btn-sm btn-primary my-1" %>
-              <% end %>
-            <% else %>
-              <p>Please <%= link_to 'sign in', new_user_session_path %> to add a comment.</p>
-            <% end %>
-          </div>
+      <!-- Comment Content -->
+      <p class="mb-1" style="font-size: 0.85rem;">
+        <strong style="color: #007bff; font-weight: 500;">
+          <%= comment.user.first_name.present? && comment.user.last_name.present? ? "#{comment.user.first_name} #{comment.user.last_name}" : 'Anonymous' %>
+        </strong>
+         <%= comment.content %> 
+      </p> 
+
+      <p class="text-muted" style="font-size: 0.7rem; color: #6c757d; margin-bottom: 0;"><%= time_ago_in_words(comment.created_at) %> ago</p> 
+    </div>
+  <% end %>
+
+  <% if user_signed_in? %>
+    <%= form_with(model: [review, Comment.new], remote: true, class: "mt-2") do |form| %>
+      <div class="mb-1">
+        <%= form.text_area :content, class: "form-control", rows: 1, placeholder: "Add a comment..." %>
+      </div>
+      <%= form.submit "Add", class: "btn btn-sm btn-primary my-1" %>
+    <% end %>
+  <% else %>
+    <p>Please <%= link_to 'sign in', new_user_session_path %> to add a comment.</p>
+  <% end %>
+</div>
+
         </div>
       </div>
     <% end %>

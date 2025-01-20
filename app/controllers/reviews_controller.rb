@@ -32,7 +32,7 @@ class ReviewsController < ApplicationController
     @like = @review.likes.new(user: current_user)
 
     if @like.save
-      redirect_to product_path(@review.product), notice: "You liked this review."
+      redirect_to product_path(@review.product)
     else
       redirect_to product_path(@review.product), alert: "You can only like a review once."
     end

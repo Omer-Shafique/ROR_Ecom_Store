@@ -29,7 +29,7 @@ class ReviewsService
   def like_review(review)
     like = review.likes.new(user: @user)
     if like.save
-      { success: true, message: "You liked this review." }
+      { success: true }
     else
       { success: false, message: "You can only like a review once." }
     end

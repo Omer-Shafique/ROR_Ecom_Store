@@ -1,0 +1,5 @@
+// Append the new comment to the comment list
+$(".comments").append('<%= j render partial: "comments/comment", locals: { comment: @comment } %>');
+
+// Clear the form
+$("form")[0].reset();
