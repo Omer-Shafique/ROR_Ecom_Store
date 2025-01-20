@@ -1,0 +1,5 @@
+// Update the order status in the DOM
+document.getElementById("order-status-<%= @order.id %>").innerHTML = "<%= j display_order_status(@order.status) %>";
+
+// Update the actions button based on the new status
+document.getElementById("order-actions-<%= @order.id %>").innerHTML = "<%= j display_order_actions(@order) %>";

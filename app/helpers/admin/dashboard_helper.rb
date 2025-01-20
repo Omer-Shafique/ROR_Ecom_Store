@@ -17,17 +17,19 @@ module Admin::DashboardHelper
   def display_order_actions(order)
     case order.status
     when 'Pending'
-      link_to "Mark Fulfilled", fulfill_admin_order_path(order), method: :patch, class: "btn btn-success btn-sm"
+      link_to "Mark Fulfilled", fulfill_admin_order_path(order), method: :patch, remote: true, class: "btn btn-success btn-sm"
     when 'Fulfilled'
-      link_to "Out for Delivery", out_for_delivery_admin_order_path(order), method: :patch, class: "btn btn-primary btn-sm"
+      link_to "Out for Delivery", out_for_delivery_admin_order_path(order), method: :patch, remote: true, class: "btn btn-primary btn-sm" 
     when 'Out for Delivery'
-      link_to "Mark Delivered", delivered_admin_order_path(order), method: :patch, class: "btn btn-danger btn-sm"
+      link_to "Mark Delivered", delivered_admin_order_path(order), method: :patch, remote: true, class: "btn btn-danger btn-sm"
     when 'Delivered'
       content_tag(:span, "Completed", class: "badge badge-success badge-mature")
     else
-      link_to "Mark Fulfilled", fulfill_admin_order_path(order), method: :patch, class: "btn btn-success btn-sm"
+      link_to "Mark Fulfilled", fulfill_admin_order_path(order), method: :patch, remote: true, class: "btn btn-success btn-sm"
     end
   end
+  
+  
 
   def paginate_orders(orders)
     if orders.respond_to?(:total_pages)
