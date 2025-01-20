@@ -55,15 +55,6 @@
         <% end %>
       </ul>
       
-      <!-- Search bar aligned to the right -->
-      <div class="d-flex ms-auto">
-      <%= form_with url: products_path, method: :get, local: true, class: 'd-flex' do |form| %>
-        <%= form.text_field :query, placeholder: "Search products...", value: params[:query], class: "form-control me-2" %>
-        <%= form.submit "Search", class: "btn btn-outline-primary" %>
-      <% end %>
-    </div>
-
-    <div id="search-results"></div>
 
     </div>
   </div>
