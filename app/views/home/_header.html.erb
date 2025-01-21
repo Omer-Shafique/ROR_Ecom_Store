@@ -19,9 +19,6 @@
           </li>
         <% else %>
           <% if current_user %>
-            <li class="nav-item ms-auto">
-              <%= link_to "<i class='bi bi-heart'></i> My Wishlist".html_safe, wishlists_path, class: "nav-link" %>
-            </li>
             <li class="nav-item">
               <%= link_to 'About Us', home_about_path, class:'nav-link' %>
             </li>

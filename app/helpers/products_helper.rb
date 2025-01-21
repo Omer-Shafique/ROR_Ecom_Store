@@ -53,7 +53,6 @@ module ProductsHelper
   def render_user_actions(product)
     safe_join([
       render_stock_status(product),
-      link_to("Add to Wishlist", product_wishlist_path(product), method: :post, class: "btn btn-danger btn-sm shadow-sm mx-1")
     ])
   end
 end
