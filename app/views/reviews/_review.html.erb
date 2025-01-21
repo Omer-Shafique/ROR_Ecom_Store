@@ -1,19 +1,19 @@
 <div class="review">
-  <p><strong><%= review.user.email %>:</strong> <%= review.content %></p>
-  <p>Rating: <%= review.rating %></p>
+    <p><strong><%= review.user.email %>:</strong> <%= review.content %></p>
+    <p>Rating: <%= review.rating %></p>
 
-  <h5>Comments:</h5>
-  <ul>
-    <% review.comments.each do |comment| %>
-      <li><strong><%= "#{comment.user.first_name} #{comment.user.last_name}" %>:</strong> <%= comment.content %></li>
+    <h5>Comments:</h5>
+    <ul>
+        <% review.comments.each do |comment| %>
+        <li><strong><%= "#{comment.user.first_name} #{comment.user.last_name}" %>:</strong> <%= comment.content %></li>
+        <% end %>
+    </ul>
+
+    <%= form_with(model: [review, Comment.new], remote: true, class: "mt-2") do |form| %>
+    <div class="mb-1">
+        <%= form.text_area :content, class: "form-control", rows: 1, placeholder: "Add a comment..." %>
+    </div>
+    <%= form.submit "Add", class: "btn btn-sm btn-primary my-1" %>
     <% end %>
-  </ul>
-
-  <%= form_with(model: [review, Comment.new], remote: true, class: "mt-2") do |form| %>
-  <div class="mb-1">
-    <%= form.text_area :content, class: "form-control", rows: 1, placeholder: "Add a comment..." %>
-  </div>
-  <%= form.submit "Add", class: "btn btn-sm btn-primary my-1" %>
-<% end %>
 
 </div>
