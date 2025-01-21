@@ -2,7 +2,6 @@ class Admin::UsersController < ApplicationController
   before_action :authenticate_user!
   before_action :authorize_admin!
 
-
   def index
     @users = User.all
   end
@@ -12,7 +11,7 @@ class Admin::UsersController < ApplicationController
   if @user.update(role: 'admin')
     respond_to do |format|
       format.html { redirect_to admin_dashboard_path, notice: "User promoted to admin." }
-      format.js   # This will trigger the make_admin.js.erb response
+      format.js 
     end
   else
     flash.now[:alert] = "Failed to promote user."
@@ -47,10 +46,9 @@ def destroy
   end
 end
 
-  
 
   private
-
+  
   def authorize_admin!
     unless current_user.admin?
       redirect_to root_path, alert: "You are not authorized to access this page."

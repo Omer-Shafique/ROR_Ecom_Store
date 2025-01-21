@@ -25,7 +25,7 @@ module Admin::DashboardHelper
     when 'Out for Delivery'
       link_to "Mark Delivered", delivered_admin_order_path(order), method: :patch, remote: true, class: "btn btn-danger btn-sm"
     when 'Delivered'
-      content_tag(:span, "Completed", class: "badge badge-success", style: "color: white; background-color: #cf8a00; padding: 5px 10px; border-radius: 5px;")
+      content_tag(:span, "Completed", class: "badge badge-success", style: "color: white; background-color: #cf8a00; padding: 10px 20px; border-radius: 5px;")
 
     else
       link_to "Mark Fulfilled", fulfill_admin_order_path(order), method: :patch, remote: true, class: "btn btn-success btn-sm"
