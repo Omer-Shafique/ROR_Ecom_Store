@@ -2,47 +2,19 @@ class CommentsController < ApplicationController
   before_action :find_review
   before_action :set_comment, only: [:destroy]
 
-
   def show
     @product = Product.find(params[:id])
-    @review = Review.find_by(product_id: @product.id) 
+    @review = Review.find_by(product_id: @product.id)
     @comment = Comment.new
   end
 
-  
   def create
-    @review = Review.find(params[:review_id])
-    @comment = @review.comments.build(comment_params)
-    @comment.user = current_user
-  
-    if @comment.save
-      respond_to do |format|
-        format.js 
-        format.html { redirect_to @review.product }
-      end
-    else
-      respond_to do |format|
-        format.js { render :error }
-        format.html { redirect_to @review.product, alert: "Unable to add comment." }
-      end
-    end
+    handle_response(comment_creation_service.call)
   end
-  
-  
 
   def destroy
-    @review = Review.find(params[:review_id])
-    @comment = @review.comments.find(params[:id])
-    @comment.destroy
-  
-    respond_to do |format|
-      format.html { redirect_to @review, notice: 'Comment was successfully deleted.' }
-      format.js   # This will render a `destroy.js.erb` file
-    end
+    handle_response(comment_destruction_service.call)
   end
-  
-  
-  
 
   private
 
@@ -57,5 +29,24 @@ class CommentsController < ApplicationController
   def comment_params
     params.require(:comment).permit(:content)
   end
-  
+
+  def comment_creation_service
+    @comment_creation_service ||= CommentCreationService.new(@review, comment_params, current_user)
+  end
+
+  def comment_destruction_service
+    @comment_destruction_service ||= CommentDestructionService.new(@review, params[:id])
+  end
+
+  def handle_response(success)
+    respond_to do |format|
+      if success
+        format.js
+        format.html { redirect_to @review.product}
+      else
+        format.js { render :error }
+        format.html { redirect_to @review.product}
+      end
+    end
+  end
 end
