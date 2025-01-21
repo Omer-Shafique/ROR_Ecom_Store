@@ -119,7 +119,7 @@ class ProductsController < ApplicationController
   end
 
   def handle_successful_payment(charge)
-    @product.reduce_stripe_quantity
+    if @product.reduce_stripe_quantity
     flash[:success] = "Payment successful!"
 
     @order = create_order
@@ -129,6 +129,13 @@ class ProductsController < ApplicationController
       flash[:error] = "Order creation failed."
       render 'orders/checkout'
     end
+
+    else
+      flash[:error] = "Transaction Failed - Stripe product unavailable - Quanity is 0 or price mismatch."
+      render 'orders/checkout' and return
+    end
+
+
   end
 
   def create_order

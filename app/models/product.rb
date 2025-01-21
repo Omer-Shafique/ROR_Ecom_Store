@@ -5,4 +5,5 @@ class Product < ApplicationRecord
   include ProductStripe
   include PgSearch::Model
   pg_search_scope :search_by_name, against: :product_title
+
 end
