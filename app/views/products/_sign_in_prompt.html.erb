@@ -1,0 +1,10 @@
+<div class="container text-center d-flex flex-column align-items-center justify-content-center vh-100 bg-light my-4">
+  <div class="p-5 rounded shadow-lg bg-white">
+    <h1 class="mb-4 text-danger">Welcome!</h1>
+    <p class="mb-4">Sign in to view products and explore more!</p>
+    <div>
+      <%= link_to "Sign In", new_user_session_path, class: "btn btn-primary btn-lg mx-2" %>
+      <%= link_to "Sign Up", new_user_registration_path, class: "btn btn-success btn-lg mx-2" %>
+    </div>
+  </div>
+</div>

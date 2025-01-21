@@ -1,265 +1,224 @@
 <div class="container mt-5">
     <div class="card shadow-lg p-4" style="border-radius: 12px; background-color: #f9f9f9;">
-      <h2 class="text-center text-primary mb-4" style="font-weight: 600; letter-spacing: 0.8px;">Product Details</h2>
-
-      <!-- Product Details Section -->
-      <div class="row g-4">
-        <!-- Product Images Section -->
-        <div class="col-md-6">
-          <div id="productImageCarousel" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner rounded shadow-sm">
-              <% if product.images.attached? %>
-                <% product.images.each_with_index do |image, index| %>
-                  <div class="carousel-item <%= 'active' if index == 0 %>">
-                    <%= image_tag image, alt: product.product_title, class: "d-block w-100 carousel-image" %>
-                  </div>
-                <% end %>
-              <% else %>
-                <div class="carousel-item active">
-                  <img src="https://via.placeholder.com/600x400?text=No+Image+Available" alt="No Image" class="d-block w-100">
+        <h2 class="text-center text-primary mb-4" style="font-weight: 600; letter-spacing: 0.8px;">Product Details</h2>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div id="productImageCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner rounded shadow-sm">
+                        <%= carousel_items(product) %>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#productImageCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#productImageCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
                 </div>
-              <% end %>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#productImageCarousel" data-bs-slide="prev">
-              <span class="carousel-control-prev-icon"></span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#productImageCarousel" data-bs-slide="next">
-              <span class="carousel-control-next-icon"></span>
-            </button>
-          </div>
+
+            <div class="col-md-6">
+                <h3 class="mb-3" style="font-size: 1.5rem; font-weight: bold; color: #333;"><%= product.product_title %></h3>
+                <p class="text-muted" style="font-size: 1rem;"><%= product.product_description %></p>
+
+                <div class="mt-4">
+                    <div class="mb-2"><strong>Price: </strong><span style="color: #28a745;"><%= formatted_price(product) %></span></div>
+                    <div class="mb-2"><strong>SKU: </strong><span><%= product.product_sku || "N/A" %></span></div>
+                    <div class="mb-2"><strong>Stock: </strong><span class="text-success"><%= formatted_stock(product) %></span></div>
+                </div>
+
+                <div class="d-flex mt-4">
+                    <%= link_to "Back to Products", products_path, class: "btn btn-outline-secondary me-2" %>
+                    <% if current_user.admin? %>
+                    <%= link_to "Edit", edit_product_path(product), class: "btn btn-outline-primary me-2" %>
+                    <%= link_to "Delete", product_path(product), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-outline-danger me-2" %>
+                    <% else %>
+                    <% if current_user.wishlist_products.include?(product) %>
+                    <%= link_to "Remove from Wishlist", product_wishlist_path(product), method: :delete, class: "btn btn-outline-danger me-2" %>
+                    <% else %>
+                    <%= link_to "Add to Wishlist", product_wishlist_path(product), method: :post, class: "btn btn-outline-danger me-2" %>
+                    <% end %>
+
+                    <% if product.stock_quantity > 0 %>
+                    <%= link_to "Buy Now", checkout_product_path(product), class: "btn btn-success", data: { turbo: false } %>
+                    <% else %>
+                    <span class="btn btn-secondary">Out of Stock</span>
+                    <% end %>
+                    <% end %>
+                </div>
+            </div>
         </div>
-
-        <!-- Product Info Section -->
-        <div class="col-md-6">
-          <h3 class="mb-3" style="font-size: 1.5rem; font-weight: bold; color: #333;"><%= product.product_title %></h3>
-          <p class="text-muted" style="font-size: 1rem;"><%= product.product_description %></p>
-
-          <div class="mt-4">
-            <div class="mb-2">
-              <strong>Price: </strong>
-              <span style="color: #28a745;">$<%= product.price.present? ? product.price : "N/A" %></span>
-            </div>
-            <div class="mb-2">
-              <strong>SKU: </strong>
-              <span><%= product.product_sku.present? ? product.product_sku : "N/A" %></span>
-            </div>
-            <div class="mb-2">
-              <strong>Stock: </strong>
-              <span class="text-success"><%= product.stock_quantity_string.present? ? product.stock_quantity_string : "2" %></span>
-            </div>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="d-flex mt-4">
-  <%= link_to "Back to Products", products_path, class: "btn btn-outline-secondary me-2" %>
-
-  <% if current_user.admin? %>
-    <!-- Admin-only buttons -->
-    <%= link_to "Edit", edit_product_path(product), class: "btn btn-outline-primary me-2" %>
-    <%= link_to "Delete", product_path(product), method: :delete, data: { confirm: "Are you sure you want to delete this product?" }, class: "btn btn-outline-danger me-2" %>
-  <% else %>
-    <!-- Normal user buttons -->
-    <% if current_user.wishlist_products.include?(product) %>
-      <%= link_to "Remove from Wishlist", product_wishlist_path(product), method: :delete, class: "btn btn-outline-danger me-2" %>
-    <% else %>
-      <%= link_to "Add to Wishlist", product_wishlist_path(product), method: :post, class: "btn btn-outline-danger me-2" %>
-    <% end %>
-
-    
-
-    <% if product.stock_quantity > 0 %>
-      <%= link_to "Buy Now", checkout_product_path(product), class: "btn btn-success" , data: { turbo: false } %>
-        <% else %>
-        <span class="btn btn-secondary">Out of Stock</span>
-        <% end %>
-  <% end %>
-        </div>
-
-
-      </div>
-    </div
-  </div>
+    </div>
 </div>
 
-
 <div class="reviews-section mt-5">
-  <h3 class="text-primary mb-4" style="font-weight: 600; letter-spacing: 1px;">Customer Reviews</h3>
-  <div class="row">
-    <% product.reviews.each_with_index do |review, index| %>
-      <% if index % 3 == 0 && index != 0 %>
-        </div><div class="row">
-      <% end %>
-      <div class="col-md-4 mb-4">
-        <div class="review p-3 shadow-sm" style="border: none; border-radius: 12px; background-color: #f8f9fa; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); transition: transform 0.3s;">
-          <p class="mb-2">
-            <strong style="color: #007bff; font-weight: 500;">
-              <%= review.user.first_name.present? && review.user.last_name.present? ? "#{review.user.first_name} #{review.user.last_name}" : 'Anonymous' %>
-            </strong>
+    <h3 class="text-primary mb-4" style="font-weight: 600; letter-spacing: 1px;">Customer Reviews</h3>
+    <div class="row">
+        <% product.reviews.each_with_index do |review, index| %>
+        <% if index % 3 == 0 && index != 0 %>
+    </div>
+    <div class="row">
+        <% end %>
+        <div class="col-md-4 mb-4">
+            <div class="review p-3 shadow-sm" style="border: none; border-radius: 12px; background-color: #f8f9fa; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); transition: transform 0.3s;">
+                <p class="mb-2">
+                    <strong style="color: #007bff; font-weight: 500;">
+                        <%= review.user.first_name.present? && review.user.last_name.present? ? "#{review.user.first_name} #{review.user.last_name}" : 'Anonymous' %>
+                    </strong>
 
-            - 
-            <% 5.times do |i| %>
-              <% if i < (review.rating || 0) %>  <!-- Default to 0 if review.rating is nil -->
-                <span style="color: #ffcc00;">&#9733;</span> <!-- Filled Star -->
-              <% else %>
-                <span style="color: #ccc;">&#9734;</span> <!-- Empty Star -->
-              <% end %>
-            <% end %>
+                    -
+                    <% 5.times do |i| %>
+                    <% if i < (review.rating || 0) %>
+                    <span style="color: #ffcc00;">&#9733;</span>
+                    <% else %>
+                    <span style="color: #ccc;">&#9734;</span>
+                    <% end %>
+                    <% end %>
 
-          </p>
-          <p class="text-muted" style="font-size: 0.95rem; line-height: 1.4;"><%= review.content %></p>
-          <p class="text-secondary" style="font-size: 0.9rem;">Likes: <strong><%= review.likes.count %></strong></p>
+                </p>
+                <p class="text-muted" style="font-size: 0.95rem; line-height: 1.4;"><%= review.content %></p>
+                <p class="text-secondary" style="font-size: 0.9rem;">Likes: <strong><%= review.likes.count %></strong></p>
 
-          <div class="d-flex gap-3">
-            <% if user_signed_in? && current_user != review.user %>
-              <%= link_to "Like", like_review_path(review), method: :post, class: "btn btn-sm btn-outline-primary" %>
-            <% end %>
+                <div class="d-flex gap-3">
+                    <% if user_signed_in? && current_user != review.user %>
+                    <%= link_to "Like", like_review_path(review), method: :post, class: "btn btn-sm btn-outline-primary" %>
+                    <% end %>
 
-            <% if current_user == review.user || current_user.admin? %> <!-- Allow admin or review owner to delete -->
-              <%= link_to "Delete", review_path(review), method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-sm btn-outline-danger" %>
-            <% end %>
-          </div>
+                    <% if current_user == review.user || current_user.admin? %>
+                    <%= link_to "Delete", review_path(review), method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-sm btn-outline-danger" %>
+                    <% end %>
+                </div>
 
-          <div class="comments mt-2">
-  <% review.comments.each do |comment| %>
-    <div  id="comment-<%= comment.id %>" class="comment mb-1 p-2 shadow-sm position-relative" style="padding-right:20px !important; border: none; border-radius: 8px; background-color: #f1f1f1; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-      <!-- Delete Button -->
-      <% if current_user == comment.user || current_user.admin? %>
-      <%= link_to "&#10005;".html_safe, review_comment_path(review, comment), method: :delete, 
+                <div class="comments mt-2">
+                    <% review.comments.each do |comment| %>
+                    <div id="comment-<%= comment.id %>" class="comment mb-1 p-2 shadow-sm position-relative" style="padding-right:20px !important; border: none; border-radius: 8px; background-color: #f1f1f1; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                        <!-- Delete Button -->
+                        <% if current_user == comment.user || current_user.admin? %>
+                        <%= link_to "&#10005;".html_safe, review_comment_path(review, comment), method: :delete, 
             remote: true, 
             data: { confirm: 'Are you sure?' }, 
             class: "btn btn-outline-danger btn-sm rounded-circle delete-icon",
-            style: "width: 20px; height: 20px; font-size: 12px; padding: 0; line-height: 16px; position: absolute; top: 5px; right: 5px;" %> 
-      <%end%>
+            style: "width: 20px; height: 20px; font-size: 12px; padding: 0; line-height: 16px; position: absolute; top: 5px; right: 5px;" %>
+                        <%end%>
 
 
+                        <p class="mb-1" style="font-size: 0.85rem;">
+                            <strong style="color: #007bff; font-weight: 500;">
+                                <%= comment.user.first_name.present? && comment.user.last_name.present? ? "#{comment.user.first_name} #{comment.user.last_name}" : 'Anonymous' %>
+                            </strong>
+                            <%= comment.content %>
+                        </p>
 
-      <!-- Comment Content -->
-      <p class="mb-1" style="font-size: 0.85rem;">
-        <strong style="color: #007bff; font-weight: 500;">
-          <%= comment.user.first_name.present? && comment.user.last_name.present? ? "#{comment.user.first_name} #{comment.user.last_name}" : 'Anonymous' %>
-        </strong>
-         <%= comment.content %> 
-      </p> 
+                        <p class="text-muted" style="font-size: 0.7rem; color: #6c757d; margin-bottom: 0;"><%= time_ago_in_words(comment.created_at) %> ago</p>
+                    </div>
+                    <% end %>
 
-      <p class="text-muted" style="font-size: 0.7rem; color: #6c757d; margin-bottom: 0;"><%= time_ago_in_words(comment.created_at) %> ago</p> 
+                    <% if user_signed_in? %>
+                    <%= form_with(model: [review, Comment.new], remote: true, class: "mt-2") do |form| %>
+                    <div class="mb-1">
+                        <%= form.text_area :content, class: "form-control", rows: 1, placeholder: "Add a comment..." %>
+                    </div>
+                    <%= form.submit "Add", class: "btn btn-sm btn-primary my-1" %>
+                    <% end %>
+                    <% else %>
+                    <p>Please <%= link_to 'sign in', new_user_session_path %> to add a comment.</p>
+                    <% end %>
+                </div>
+
+            </div>
+        </div>
+        <% end %>
     </div>
-  <% end %>
 
-  <% if user_signed_in? %>
-    <%= form_with(model: [review, Comment.new], remote: true, class: "mt-2") do |form| %>
-      <div class="mb-1">
-        <%= form.text_area :content, class: "form-control", rows: 1, placeholder: "Add a comment..." %>
-      </div>
-      <%= form.submit "Add", class: "btn btn-sm btn-primary my-1" %>
-    <% end %>
-  <% else %>
-    <p>Please <%= link_to 'sign in', new_user_session_path %> to add a comment.</p>
-  <% end %>
-</div>
-
-        </div>
-      </div>
-    <% end %>
-  </div>
-
-  <% if user_signed_in? %>
+    <% if user_signed_in? %>
     <div class="review-form mt-4 p-4 shadow-sm" style="border: none; border-radius: 12px; background-color: #fff; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
-      <h4 class="text-primary mb-3" style="font-weight: 600; letter-spacing: 0.8px;">Write a Review</h4>
-      <%= form_with(model: [product, Review.new], local: true, class: "needs-validation") do |form| %>
+        <h4 class="text-primary mb-3" style="font-weight: 600; letter-spacing: 0.8px;">Write a Review</h4>
+        <%= form_with(model: [product, Review.new], local: true, class: "needs-validation") do |form| %>
         <div class="mb-3">
-          <%= form.label :rating, "Rating", class: "form-label" %>
-          <div class="star-rating">
-            <% 5.times do |i| %>
-              <%= radio_button_tag 'review[rating]', i+1, false, id: "rating_#{i+1}", class: 'star-input' %>
-              <label for="rating_<%= i+1 %>" class="star-label">&#9733;</label> <!-- Filled Star -->
-            <% end %>
-          </div>
+            <%= form.label :rating, "Rating", class: "form-label" %>
+            <div class="star-rating">
+                <% 5.times do |i| %>
+                <%= radio_button_tag 'review[rating]', i+1, false, id: "rating_#{i+1}", class: 'star-input' %>
+                <label for="rating_<%= i+1 %>" class="star-label">&#9733;</label>
+                <% end %>
+            </div>
         </div>
 
         <div class="mb-3">
-          <%= form.label :content, "Your Review", class: "form-label" %>
-          <%= form.text_area :content, class: "form-control", rows: 4, placeholder: "Write your thoughts here..." %>
+            <%= form.label :content, "Your Review", class: "form-label" %>
+            <%= form.text_area :content, class: "form-control", rows: 4, placeholder: "Write your thoughts here..." %>
         </div>
 
         <%= form.submit "Submit Review", class: "btn btn-primary" %>
-      <% end %>
+        <% end %>
     </div>
-  <% else %>
+    <% else %>
     <p class="mt-4 text-center">Please <%= link_to 'sign in', new_user_session_path %> to leave a review.</p>
-  <% end %>
+    <% end %>
 </div>
-
-
-
-
-
-
 
 <br>
 <br>
 <br>
 
 <style>
-  .carousel-image {
-    width: 600px; 
-    height: 400px; 
-    object-fit: cover; 
-  }
+    .carousel-image {
+        width: 600px;
+        height: 400px;
+        object-fit: cover;
+    }
 
-  .star-rating {
-  display: inline-flex;
-  gap: 5px;
-  direction: rtl;
-}
+    .star-rating {
+        display: inline-flex;
+        gap: 5px;
+        direction: rtl;
+    }
 
-.star-input {
-  display: none;
-}
+    .star-input {
+        display: none;
+    }
 
-.star-label {
-  font-size: 1.5rem;
-  color: #ddd;
-  cursor: pointer;
-  transition: color 0.3s;
-}
+    .star-label {
+        font-size: 1.5rem;
+        color: #ddd;
+        cursor: pointer;
+        transition: color 0.3s;
+    }
 
-.star-input:checked ~ .star-label {
-  color: #ffc107; /* Golden color for selected stars */
-}
+    .star-input:checked~.star-label {
+        color: #ffc107;
+        /* Golden color for selected stars */
+    }
 
-.star-input:hover ~ .star-label,
-.star-label:hover {
-  color: #ffc107;
-}
-
-
-.comment {
-  position: relative;
-  border: none;
-  border-radius: 8px;
-  background-color: #f1f1f1;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.delete-icon {
-  width: 10px;
-  height: 10px;
-  font-size: 12px;
-  font-weight:bold;
-  padding: 0;
-  line-height: 16px;
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  border: 2px solid #dc3545; /* Red border */
-  background-color: #dc3545;
-  color: white;
-  border-radius: 50%;
-  transition: all 0.3s ease; 
-  margin-top:5px;
-}
+    .star-input:hover~.star-label,
+    .star-label:hover {
+        color: #ffc107;
+    }
 
 
+    .comment {
+        position: relative;
+        border: none;
+        border-radius: 8px;
+        background-color: #f1f1f1;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-
+    .delete-icon {
+        width: 10px;
+        height: 10px;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 0;
+        line-height: 16px;
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        border: 2px solid #dc3545;
+        /* Red border */
+        background-color: #dc3545;
+        color: white;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        margin-top: 5px;
+    }
 </style>

@@ -1,91 +1,35 @@
 <% if user_signed_in? %>
-  <% content_for :title, "Products" %>
+<% content_for :title, "Products" %>
 
-  <div class="container mt-5">
+<div class="container mt-5">
     <div class="card shadow-lg p-4" style="border-radius: 15px;">
-      <h2 class="text-center text-primary mb-4"></h2>
+        <h2 class="text-center text-primary mb-4"></h2>
 
-      <table class="table table-hover table-striped table-bordered text-center">
-        <thead class="table-dark" style="background: linear-gradient(90deg, #4b6cb7, #182848); color: #ffffff;">
-          <tr>
+        <table class="table table-hover table-striped table-bordered text-center">
+            <thead class="table-dark" style="background: linear-gradient(90deg, #4b6cb7, #182848); color: #ffffff;">
+                <tr>
+                    <th>Product Image</th>
+                    <th>Product Title</th>
+                    <th>Product Description</th>
+                    <th>Product SKU</th>
+                    <th>Stock Quantity</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%= render partial: "product_row", collection: @products, as: :product %>
+            </tbody>
+        </table>
 
-            <th style="padding: 12px; font-size: 16px;">Product Image</th>
-            <th style="padding: 12px; font-size: 16px;">Product Title</th>
-            <th style="padding: 12px; font-size: 16px;">Product Description</th>
-            <th style="padding: 12px; font-size: 16px;">Product SKU</th>
-            <th style="padding: 12px; font-size: 16px;">Stock Quantity</th>
-            <th style="padding: 12px; font-size: 16px;">Price</th>
-            <th style="padding: 12px; font-size: 16px;">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @products.each do |product| %>
-            <tr style="background-color: #ffffff; transition: background 0.3s;">
-                    <td>
-                <% if product.images.attached? %>
-                  <% product.images.each do |image| %>
-                    <%= image_tag image, alt: product.product_title, class: "img-fluid", size: "100x100" %>
-                  <% end %>
-                <% else %>
-                  <span>No Image</span>
-                <% end %>
-
-              </td>
-              <td style="padding: 12px; font-weight: bold;">
-                <%= link_to product.product_title, product, class: "text-decoration-none text-primary" %>
-              </td>
-              <td style="padding: 12px; color: #555;">
-                <%= product.product_description %>
-              </td>
-              <td style="padding: 12px; font-weight: bold; color: #333;">
-                <%= product.product_sku %>
-              </td>
-              <td style="padding: 12px; color: #28a745; font-weight: bold;">
-                <%= product.stock_quantity_string %>
-              </td>
-                <td style="padding: 12px; color: #28a745; font-weight: bold;">
-                <%= product.price %>
-              </td>
-              <td style="padding: 12px;">
-                <% if current_user.admin? %>
-                <%= link_to "Edit", edit_product_path(product), class: "btn btn-warning btn-sm shadow-sm  mx-1 my-2" %>
-                <%= link_to "Delete", product_path(product), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-sm shadow-sm  mx-1" %>
-                <% else %>
-                <% if product.stock_quantity > 0 %>
-                    <%= link_to "Buy Now", checkout_product_path(product), class: "btn btn-success btn-sm shadow-sm  mx-1 my-2" , data: { turbo: false } %>
-                  <% else %>
-                    <span class="btn btn-secondary btn-sm mx-1 my-2">Out of Stock</span>
-                  <% end %>
-                <%= link_to "Add to Wishlist", product_wishlist_path(product), method: :post, class: "btn btn-danger btn-sm shadow-sm  mx-1" %>
-                <% end %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-
-      <div class="text-center mt-4">
-
-      <% if current_user.admin? %>
+        <% if current_user.admin? %>
         <div class="text-center mt-4">
-          <%= link_to "Add New Product", new_product_path, class: "btn btn-primary btn-lg shadow-sm  px-5" %>
+            <%= link_to "Add New Product", new_product_path, class: "btn btn-primary btn-lg shadow-sm px-5" %>
         </div>
-      <% end %>
-
-
-      </div>
+        <% end %>
     </div>
-  </div>
-  <br><br><br>
+</div>
+
 <% else %>
-  <div class="container text-center d-flex flex-column align-items-center justify-content-center vh-100 bg-light my-4">
-    <div class="p-5 rounded shadow-lg bg-white">
-      <h1 class="mb-4 text-danger">Welcome!</h1>
-      <p class="mb-4">Sign in to view products and explore more!</p>
-      <div>
-        <%= link_to "Sign In", new_user_session_path, class: "btn btn-primary btn-lg mx-2" %>
-        <%= link_to "Sign Up", new_user_registration_path, class: "btn btn-success btn-lg mx-2" %>
-      </div>
-    </div>
-  </div>
+<%= render "sign_in_prompt" %>
 <% end %>
