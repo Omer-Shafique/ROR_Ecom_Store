@@ -4,8 +4,6 @@ class Admin::DashboardController < ApplicationController
 
   def index
     @filter = params[:filter] || 'new_first'
-  
-    # Apply filtering based on the selected filter
     @orders = case @filter
               when 'new_first'
                 Order.order(created_at: :desc)
@@ -20,8 +18,6 @@ class Admin::DashboardController < ApplicationController
               else
                 Order.all
               end
-
-    # Paginate the filtered orders
     @orders = @orders.paginate(page: params[:page], per_page: 10)
   end
 

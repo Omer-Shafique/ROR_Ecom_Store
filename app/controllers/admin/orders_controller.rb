@@ -18,7 +18,7 @@ class Admin::OrdersController < ApplicationController
     @order = Order.find(params[:id])
     if @order.update(status: 'Out for Delivery')
       respond_to do |format|
-        format.js # This will trigger a JS response
+        format.js
       end
     else
       flash[:error] = "Unable to update order status."
@@ -33,7 +33,7 @@ class Admin::OrdersController < ApplicationController
     @order = Order.find(params[:id])
     if @order.update(status: 'Delivered')
       respond_to do |format|
-        format.js # This will trigger the JS response
+        format.js
       end
     else
       flash[:error] = "Unable to update order status."
