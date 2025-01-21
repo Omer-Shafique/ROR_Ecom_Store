@@ -1,10 +1,25 @@
 class CheckoutService
-  def initialize(product, user_name, user_email, stripe_token)
+  def initialize(product, stripe_token, user_name, user_email)
     @product = product
+    @stripe_token = stripe_token
     @user_name = user_name
     @user_email = user_email
-    @stripe_token = stripe_token
   end
+
+  def process
+    charge = process_checkout
+
+    if charge
+      InventoryService.update_inventory(@product, -1)
+      { success: true, order: Order.create!(product: @product), message: "Payment Successful. Thank you for your purchase!" }
+    else
+      { success: false, message: "Payment failed. Please try again." }
+    end
+  rescue Stripe::CardError => e
+    { success: false, message: e.message }
+  end
+
+  private
 
   def process_checkout
     image_url = fetch_product_image_url
@@ -20,8 +35,6 @@ class CheckoutService
 
     charge.paid
   end
-
-  private
 
   def fetch_product_image_url
     @product.images.attached? ? Rails.application.routes.url_helpers.rails_blob_path(@product.images.first, only_path: true) : nil
