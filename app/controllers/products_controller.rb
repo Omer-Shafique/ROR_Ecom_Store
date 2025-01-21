@@ -4,45 +4,45 @@ class ProductsController < ApplicationController
   before_action :correct_user, only: [:edit, :update, :destroy]
 
   def index
-    if params[:query].present?
-      @products = Product.where("LOWER(product_title) LIKE LOWER(?) OR LOWER(product_description) LIKE LOWER(?)", "%#{params[:query]}%", "%#{params[:query]}%")
-    else
-      @products = Product.all
-    end
-  end
-
-  def show
-    @products = Product.where(user: current_user)
-    @review = @product.reviews.first
+    @products = Product.all
+    @product_service = Products::ProductService.new(nil, params.merge(current_user: current_user))
   end
 
   def new
     @product = current_user.products.build
   end
+  
+  def show
+    @products = Product.where(user: current_user)
+    @review = @product.reviews.first
+  end
 
+  #disabled - todo
   def search
-    @products = Product.where("product_title ILIKE ?", "%#{params[:query]}%")
+    @products = Products::ProductService.new(nil, params).search_products
     respond_to do |format|
-      format.js
+      format.js  
       format.html
     end
   end
 
-  def edit; end
-
   def create
     @product = current_user.products.build(product_params)
-    if @product.save
-      @product.create_or_update_stripe_product
+    product_service = Products::ProductService.new(@product, params)
+  
+    if product_service.create_product
       redirect_to @product, notice: "Product was successfully created."
     else
       render :new
     end
   end
 
+  def edit; end
+
   def update
-    if @product.update(product_params)
-      @product.create_or_update_stripe_product
+    product_service = Products::ProductService.new(@product, params)
+
+    if product_service.update_product(product_params)
       redirect_to @product, notice: "Product was successfully updated."
     else
       render :edit
@@ -50,49 +50,47 @@ class ProductsController < ApplicationController
   end
 
   def destroy
-    if @product.stripe_product_id.present?
-      begin
-        # Check if the product exists on Stripe
-        Stripe::Product.retrieve(@product.stripe_product_id)
+    @product = Product.find(params[:id])
+    product_service = Products::ProductService.new(@product)
 
-        # Archive the product on Stripe by setting active to false
-        archive_successful = Stripe::Product.update(@product.stripe_product_id, active: false)
+    result = product_service.archive_and_destroy_product
 
-        if archive_successful
-          @product.destroy
-          flash[:success] = "Product was successfully deleted from the store and archived on Stripe."
-        else
-          flash[:alert] = "Failed to archive product on Stripe. Product not deleted from the store."
-        end
-      rescue Stripe::InvalidRequestError => e
-        # If the product is not found on Stripe (deleted manually), remove it from the store
-        Rails.logger.info "Product not found on Stripe, deleting from the store as well."
-        @product.destroy
-        flash[:success] = "Product was deleted from the store because it no longer exists on Stripe."
-      rescue Stripe::StripeError => e
-        Rails.logger.error "Stripe error: #{e.message}"
-        flash[:alert] = "There was an error with Stripe, and the product was not archived or deleted."
-      end
+    if result[:success]
+      flash[:success] = result[:success]
     else
-      flash[:alert] = "Stripe product ID is missing or invalid."
+      flash[:alert] = result[:alert]
     end
+
     redirect_to products_path
   end
 
-  def checkout
-    if params[:stripeToken].blank?
-      render 'orders/checkout' and return
-    end
 
+  def checkout
+    @product = Product.find(params[:id])
+    @product_service = Products::ProductService.new(@product, params.merge(current_user: current_user))
     begin
-      charge = create_stripe_charge
-      handle_successful_payment(charge)
-    rescue Stripe::CardError => e
-      flash[:error] = e.message
+      charge = @product_service.create_stripe_charge
+      if @product_service.handle_successful_payment(charge)
+        @order = @product_service.create_order
+        if @order.save
+          redirect_to order_path(@order)
+        else
+          flash[:error] = "Failed to create the order."
+          render 'orders/checkout'
+        end
+      else
+        flash[:error] = "Transaction Failed - Stripe product unavailable or price mismatch."
+        render 'orders/checkout'
+      end
+    rescue => e
+      logger.error "An error occurred: #{e.message}"
+      logger.error e.backtrace.join("\n") 
       render 'orders/checkout'
     end
+    
   end
-
+  
+  
   private
 
   def set_product
@@ -103,64 +101,7 @@ class ProductsController < ApplicationController
     params.require(:product).permit(:product_title, :product_description, :product_sku, :stock_quantity_string, :user_id, :price, :stripe_price_id, images: [])
   end
 
-  def create_stripe_charge
-    Stripe::Charge.create(
-      amount: (@product.price * 100).to_i,
-      currency: 'usd',
-      source: params[:stripeToken],
-      description: "Charge for product #{@product.product_title}"
-    )
-  end
-
-  def handle_successful_payment(charge)
-    if @product.reduce_stripe_quantity
-      flash[:success] = "Payment successful!"
-      @order = create_order
-      if @order.save
-        redirect_to order_path(@order)
-      else
-        flash[:error] = "Order creation failed."
-        render 'orders/checkout'
-      end
-    else
-      flash[:error] = "Transaction Failed - Stripe product unavailable - Quantity is 0 or price mismatch."
-      render 'orders/checkout' and return
-    end
-  rescue Stripe::APIConnectionError => e
-    Rails.logger.error "Stripe API connection error: #{e.message}"
-    flash[:error] = "Transaction failed due to network issues. Please try again."
-    render 'orders/checkout'
-
-  rescue Stripe::InvalidRequestError => e
-    Rails.logger.error "Invalid request to Stripe: #{e.message}"
-    flash[:error] = "Transaction failed due to invalid request. Please try again."
-    render 'orders/checkout'
-
-  rescue ActiveRecord::ActiveRecordError => e
-    Rails.logger.error "Database error during order creation: #{e.message}"
-    flash[:error] = "Error saving the order. Please try again."
-    render 'orders/checkout'
-
-  rescue StandardError => e
-    Rails.logger.error "Unexpected error during payment processing: #{e.message}"
-    flash[:error] = "An unexpected error occurred. Please try again later."
-    render 'orders/checkout'
-  end
-
-  def create_order
-    Order.new(
-      product: @product,
-      user: current_user,
-      total_price: @product.price,
-      status: 'pending',
-      address: params[:address],
-      phone: params[:phone],
-      location: params[:location],
-      name: params[:name],
-      email: params[:email]
-    )
-  end
-
+  
   def correct_user
     @product = Product.find(params[:id])
     redirect_to root_url, notice: "Not authorized" unless @product.user == current_user
