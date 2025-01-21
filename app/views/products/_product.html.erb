@@ -68,7 +68,7 @@
     
 
     <% if product.stock_quantity > 0 %>
-      <%= link_to "Buy Now", checkout_product_path(product), class: "btn btn-success" %>
+      <%= link_to "Buy Now", checkout_product_path(product), class: "btn btn-success" , data: { turbo: false } %>
         <% else %>
         <span class="btn btn-secondary">Out of Stock</span>
         <% end %>

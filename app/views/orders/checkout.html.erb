@@ -5,108 +5,107 @@
 <%= render 'shared/flash_messages' %>
 
 <div class="checkout-container">
-  <!-- Product Details -->
-  <div class="product-details">
-    <h2 class="section-title">Product Details</h2>
-    <%= render 'orders/product_details', product: @product %>
-  </div>
+    <div class="product-details">
+        <h2 class="section-title">Product Details</h2>
+        <%= render 'orders/product_details', product: @product %>
+    </div>
 
-  <!-- Checkout Form -->
-  <div class="checkout-form">
-    <h2 class="section-title">Checkout</h2>
-    <%= render 'orders/checkout_form', product: @product %>
-  </div>
+    <div class="checkout-form">
+        <h2 class="section-title">Checkout</h2>
+        <%= render 'orders/checkout_form', product: @product %>
+    </div>
 </div>
 
 
 
 
 <style>
-  body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f7fc;
-    color: #333;
-  }
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f7fc;
+        color: #333;
+    }
 
-  .page-title {
-    text-align: center;
-    margin: 20px 0;
-    color: #4CAF50;
-  }
+    .page-title {
+        text-align: center;
+        margin: 20px 0;
+        color: #4CAF50;
+    }
 
-  .checkout-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
-    padding: 20px;
-  }
+    .checkout-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        padding: 20px;
+    }
 
-  .product-details {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
+    .product-details {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
 
-  .checkout-form {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
+    .checkout-form {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
 
-  .section-title {
-    color: #3f51b5;
-    border-bottom: 2px solid #3f51b5;
-    padding-bottom: 5px;
-    margin-bottom: 10px;
-  }
+    .section-title {
+        color: #3f51b5;
+        border-bottom: 2px solid #3f51b5;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+    }
 
-  table {
-    width: 100%;
-    margin-bottom: 20px;
-    border-collapse: collapse;
-  }
+    table {
+        width: 100%;
+        margin-bottom: 20px;
+        border-collapse: collapse;
+    }
 
-  th, td {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #f1f1f1;
-  }
+    th,
+    td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #f1f1f1;
+    }
 
-  th {
-    background-color: #f7f7f7;
-    color: #333;
-  }
+    th {
+        background-color: #f7f7f7;
+        color: #333;
+    }
 
-  .btn {
-    background-color: #3f51b5;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
+    .btn {
+        background-color: #3f51b5;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
 
-  .btn:hover {
-    background-color: #5c6bc0;
-  }
+    .btn:hover {
+        background-color: #5c6bc0;
+    }
 
-  .alert {
-    padding: 15px;
-    margin: 20px 0;
-    border-radius: 5px;
-  }
+    .alert {
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 5px;
+    }
 
-  .alert-success {
-    background-color: #dff0d8;
-    color: #3c763d;
-  }
+    .alert-success {
+        background-color: #dff0d8;
+        color: #3c763d;
+    }
 
-  .alert-danger {
-    background-color: #f2dede;
-    color: #a94442;
-  }
+    .alert-danger {
+        background-color: #f2dede;
+        color: #a94442;
+    }
 </style>
 
 
@@ -114,81 +113,85 @@
 
 <script src="https://js.stripe.com/v3/"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    var stripe = Stripe('<%= Rails.configuration.stripe[:publishable_key] %>');
-    var elements = stripe.elements();
+    document.addEventListener("DOMContentLoaded", function() {
+        var stripe = Stripe('<%= Rails.configuration.stripe[:publishable_key] %>');
+        var elements = stripe.elements();
 
-    var style = {
-      base: {
-        fontSize: "16px",
-        color: "#32325d",
-        fontFamily: "'Helvetica Neue', Helvetica, sans-serif",
-        "::placeholder": { color: "#aab7c4" }
-      },
-      invalid: { color: "#fa755a", iconColor: "#fa755a" }
-    };
+        var style = {
+            base: {
+                fontSize: "16px",
+                color: "#32325d",
+                fontFamily: "'Helvetica Neue', Helvetica, sans-serif",
+                "::placeholder": {
+                    color: "#aab7c4"
+                }
+            },
+            invalid: {
+                color: "#fa755a",
+                iconColor: "#fa755a"
+            }
+        };
 
-    var card = elements.create('card', { style: style });
-    card.mount('#card-element');
+        var card = elements.create('card', {
+            style: style
+        });
+        card.mount('#card-element');
 
-    var form = document.querySelector('form');
-    form.addEventListener('submit', function(event) {
-      event.preventDefault();
-      if (!form.checkValidity()) {
-        alert("Please fill out all fields correctly.");
-        return;
-      }
+        var form = document.querySelector('form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            if (!form.checkValidity()) {
+                alert("Please fill out all fields correctly.");
+                return;
+            }
 
-      stripe.createToken(card).then(function(result) {
-        if (result.error) {
-          var errorElement = document.getElementById('card-errors');
-          errorElement.textContent = result.error.message;
-        } else {
-          stripeTokenHandler(result.token);
+            stripe.createToken(card).then(function(result) {
+                if (result.error) {
+                    var errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = result.error.message;
+                } else {
+                    stripeTokenHandler(result.token);
+                }
+            });
+        });
+
+        function stripeTokenHandler(token) {
+            var form = document.querySelector('form');
+
+            
+            var hiddenInputToken = document.createElement('input');
+            hiddenInputToken.setAttribute('type', 'hidden');
+            hiddenInputToken.setAttribute('name', 'stripeToken');
+            hiddenInputToken.setAttribute('value', token.id);
+            form.appendChild(hiddenInputToken);
+
+          
+            var hiddenInputName = document.createElement('input');
+            hiddenInputName.setAttribute('type', 'hidden');
+            hiddenInputName.setAttribute('name', 'name');
+            hiddenInputName.setAttribute('value', document.querySelector('[name="name"]').value);
+            form.appendChild(hiddenInputName);
+
+        
+            var hiddenInputEmail = document.createElement('input');
+            hiddenInputEmail.setAttribute('type', 'hidden');
+            hiddenInputEmail.setAttribute('name', 'email');
+            hiddenInputEmail.setAttribute('value', document.querySelector('[name="email"]').value);
+            form.appendChild(hiddenInputEmail);
+
+         
+            var hiddenInputAddress = document.createElement('input');
+            hiddenInputAddress.setAttribute('type', 'hidden');
+            hiddenInputAddress.setAttribute('name', 'address');
+            hiddenInputAddress.setAttribute('value', document.querySelector('[name="address"]').value);
+            form.appendChild(hiddenInputAddress);
+
+            var hiddenInputPhone = document.createElement('input');
+            hiddenInputPhone.setAttribute('type', 'hidden');
+            hiddenInputPhone.setAttribute('name', 'phone');
+            hiddenInputPhone.setAttribute('value', document.querySelector('[name="phone"]').value);
+            form.appendChild(hiddenInputPhone);
+            form.submit();
         }
-      });
     });
-
-    function stripeTokenHandler(token) {
-      var form = document.querySelector('form');
-
-      // Create hidden input for stripeToken
-      var hiddenInputToken = document.createElement('input');
-      hiddenInputToken.setAttribute('type', 'hidden');
-      hiddenInputToken.setAttribute('name', 'stripeToken');
-      hiddenInputToken.setAttribute('value', token.id);
-      form.appendChild(hiddenInputToken);
-
-      // Create hidden input for name
-      var hiddenInputName = document.createElement('input');
-      hiddenInputName.setAttribute('type', 'hidden');
-      hiddenInputName.setAttribute('name', 'name');
-      hiddenInputName.setAttribute('value', document.querySelector('[name="name"]').value);
-      form.appendChild(hiddenInputName);
-
-      // Create hidden input for email
-      var hiddenInputEmail = document.createElement('input');
-      hiddenInputEmail.setAttribute('type', 'hidden');
-      hiddenInputEmail.setAttribute('name', 'email');
-      hiddenInputEmail.setAttribute('value', document.querySelector('[name="email"]').value);
-      form.appendChild(hiddenInputEmail);
-
-      // Create hidden input for address
-      var hiddenInputAddress = document.createElement('input');
-      hiddenInputAddress.setAttribute('type', 'hidden');
-      hiddenInputAddress.setAttribute('name', 'address');
-      hiddenInputAddress.setAttribute('value', document.querySelector('[name="address"]').value);
-      form.appendChild(hiddenInputAddress);
-
-      // Create hidden input for phone
-      var hiddenInputPhone = document.createElement('input');
-      hiddenInputPhone.setAttribute('type', 'hidden');
-      hiddenInputPhone.setAttribute('name', 'phone');
-      hiddenInputPhone.setAttribute('value', document.querySelector('[name="phone"]').value);
-      form.appendChild(hiddenInputPhone);
-
-      // Submit the form
-      form.submit();
-    }
-  });
 </script>
