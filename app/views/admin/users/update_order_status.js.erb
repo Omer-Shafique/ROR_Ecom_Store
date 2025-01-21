@@ -1,0 +1,3 @@
+// update_order_status.js.erb
+document.getElementById("order-status-<%= @order.id %>").innerHTML = "<%= j display_order_status(@order.status) %>";
+document.getElementById("order-actions-<%= @order.id %>").innerHTML = "<%= j display_order_actions(@order) %>";

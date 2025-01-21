@@ -14,6 +14,8 @@
     <%= csp_meta_tag %>
     <%= javascript_importmap_tags %>
     <%= javascript_include_tag 'rails-ujs' %>
+    <%= turbo_include_tags %>
+
 
     <%= yield :head %>
     <%# <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %> 
@@ -38,6 +40,7 @@
 
 
 <style>
+
 
 .thank-you-container {
     display: flex;

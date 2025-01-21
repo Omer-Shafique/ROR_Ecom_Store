@@ -31,22 +31,23 @@
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody>
-              <% @orders.each do |order| %>
-                <tr>
-                  <td><%= order.id %></td>
-                  <td><%= order.product.product_title || 'No product' %></td>
-                  <td><%= order.email || "No Email" %></td>
-                  <td><%= number_to_currency(order.total_price) %></td>
-                  <td><%= display_order_status(order.status) %></td>
-                  <td><%= order.address || "No Address" %></td>
-                  <td><%= order.phone || "No Number" %></td>
-                  <td>
-                    <%= display_order_actions(order) %>
-                  </td>
-                </tr>
-              <% end %>
-            </tbody>
+<tbody>
+  <% @orders.each do |order| %>
+    <tr>
+      <td><%= order.id %></td>
+      <td><%= order.product.product_title || 'No product' %></td>
+      <td><%= order.email || "No Email" %></td>
+      <td><%= number_to_currency(order.total_price) %></td>
+      <td id="order-status-<%= order.id %>"><%= display_order_status(order.status) %></td>
+      <td><%= order.address || "No Address" %></td>
+      <td><%= order.phone || "No Number" %></td>
+      <td id="order-actions-<%= order.id %>">
+        <%= display_order_actions(order) %>
+      </td>
+    </tr>
+  <% end %>
+</tbody>
+
           </table>
         </div>
         <%= paginate_orders(@orders) %>

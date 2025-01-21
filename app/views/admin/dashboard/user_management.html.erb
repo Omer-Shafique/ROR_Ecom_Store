@@ -17,16 +17,15 @@
             </thead>
             <tbody>
               <% @users.each do |user| %>
-                <tr>
+                <tr id="user-<%= user.id %>">
                   <td><%= user.id %></td>
                   <td><%= user.email %></td>
-                  <td><%= user.admin? ? 'Admin' : 'User' %></td>
-                  <td>
-                    <%= display_user_actions(user) %>
-                  </td>
+                  <td class="role"><%= user.admin? ? 'Admin' : 'User' %></td>
+                  <td class="actions"><%= display_user_actions(user) %></td>
                 </tr>
               <% end %>
             </tbody>
+
           </table>
         </div>
       <% else %>

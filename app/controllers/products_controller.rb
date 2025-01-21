@@ -14,6 +14,7 @@ class ProductsController < ApplicationController
 
   def show
     @products = Product.where(user: current_user)
+    @review = @product.reviews.first
   end
 
   def new
@@ -52,18 +53,38 @@ class ProductsController < ApplicationController
   end
 
   def destroy
-    if @product.destroy
+    if @product.stripe_product_id.present?
       begin
-        Stripe::Product.delete(@product.stripe_product_id)
-        flash[:success] = "Product was successfully deleted from the store and Stripe."
+        # Check if the product exists on Stripe
+        Stripe::Product.retrieve(@product.stripe_product_id)
+        
+        # Archive the product on Stripe by setting active to false
+        archive_successful = Stripe::Product.update(@product.stripe_product_id, active: false)
+  
+        if archive_successful
+          @product.destroy
+          flash[:success] = "Product was successfully deleted from the store and archived on Stripe."
+        else
+          flash[:alert] = "Failed to archive product on Stripe. Product not deleted from the store."
+        end
+      rescue Stripe::InvalidRequestError => e
+        # If the product is not found on Stripe (deleted manually), remove it from the store
+        Rails.logger.info "Product not found on Stripe, deleting from the store as well."
+        @product.destroy
+        flash[:success] = "Product was deleted from the store because it no longer exists on Stripe."
       rescue Stripe::StripeError => e
-        flash[:alert] = "Product was deleted from the store, but there was an issue deleting it from Stripe: #{e.message}"
+        Rails.logger.error "Stripe error: #{e.message}"
+        flash[:alert] = "There was an error with Stripe, and the product was not archived or deleted."
       end
-      redirect_to products_path, notice: "Product was successfully deleted."
     else
-      redirect_to products_path, alert: "Product could not be deleted."
+      flash[:alert] = "Stripe product ID is missing or invalid."
     end
+    redirect_to products_path
   end
+  
+  
+  
+
   
 
   def checkout
@@ -102,6 +123,12 @@ class ProductsController < ApplicationController
 
   def handle_successful_payment(charge)
     @product.reduce_stripe_quantity
+
+    if errors.any?
+      flash[:error] = "There was an issue reducing the stock quantity on Stripe."
+      render 'orders/checkout' and return
+    end
+    
     flash[:success] = "Payment successful!"
 
     @order = create_order
@@ -135,172 +162,3 @@ class ProductsController < ApplicationController
   end
 
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# class ProductsController < ApplicationController
-#   include UserAuthorizable
-#   include ProductManagement
-
-#   before_action :set_product, only: %i[show edit update destroy checkout]
-#   before_action :authenticate_user!, except: [:index, :show]
-
-#   def index
-#     @products = Product.all
-#   end
-
-#   def show
-#     @products = Product.where(user: current_user)
-#   end
-
-#   def new
-#     @product = current_user.products.build
-#   end
-
-#   def edit; end
-
-#   def create
-#     @product = current_user.products.build(product_params)
-
-#     if @product.save
-#       @product.create_or_update_stripe_product
-#       redirect_to @product, notice: "Product was successfully created."
-#     else
-#       render :new
-#     end
-#   end
-
-#   def update
-#     if @product.update(product_params)
-#       @product.create_or_update_stripe_product
-#       redirect_to @product, notice: "Product was successfully updated."
-#     else
-#       render :edit
-#     end
-#   end
-
-#   def destroy
-#     if @product.destroy
-#       redirect_to products_path, notice: "Product was successfully deleted."
-#     else
-#       redirect_to products_path, alert: "Product could not be deleted."
-#     end
-#   end
-
-#   def checkout
-#     return render 'orders/checkout' if params[:stripeToken].blank?
-
-#     stripe_payment_service = StripePaymentService.new(@product, params[:stripeToken], checkout_params)
-
-#     begin
-#       # Process the payment and create the order
-#       charge = stripe_payment_service.create_order_and_process_payment
-#       handle_successful_payment(charge)
-#     rescue Stripe::CardError => e
-#       flash[:error] = e.message
-#       render 'orders/checkout'
-#     end
-#   end
-
-#   private
-
-#   def handle_successful_payment(charge)
-#     @product.reduce_stripe_quantity
-#     flash[:success] = "Payment successful!"
-
-#     @order = OrderCreationService.new(@product, current_user, checkout_params).create_order
-#     if @order.save
-#       redirect_to order_path(@order)
-#     else
-#       flash[:error] = "Order creation failed."
-#       render 'orders/checkout'
-#     end
-#   end
-
-#   def checkout_params
-#     params.permit(:address, :phone, :location, :name, :email)
-#   end
-# end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

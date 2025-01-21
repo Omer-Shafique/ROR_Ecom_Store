@@ -21,88 +21,6 @@
 
 
 
-<script src="https://js.stripe.com/v3/"></script>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    var stripe = Stripe('<%= Rails.configuration.stripe[:publishable_key] %>');
-    var elements = stripe.elements();
-
-    var style = {
-      base: {
-        fontSize: "16px",
-        color: "#32325d",
-        fontFamily: "'Helvetica Neue', Helvetica, sans-serif",
-        "::placeholder": { color: "#aab7c4" }
-      },
-      invalid: { color: "#fa755a", iconColor: "#fa755a" }
-    };
-
-    var card = elements.create('card', { style: style });
-    card.mount('#card-element');
-
-    var form = document.querySelector('form');
-    form.addEventListener('submit', function(event) {
-      event.preventDefault();
-      if (!form.checkValidity()) {
-        alert("Please fill out all fields correctly.");
-        return;
-      }
-
-      stripe.createToken(card).then(function(result) {
-        if (result.error) {
-          var errorElement = document.getElementById('card-errors');
-          errorElement.textContent = result.error.message;
-        } else {
-          stripeTokenHandler(result.token);
-        }
-      });
-    });
-
-    function stripeTokenHandler(token) {
-      var form = document.querySelector('form');
-
-      // Create hidden input for stripeToken
-      var hiddenInputToken = document.createElement('input');
-      hiddenInputToken.setAttribute('type', 'hidden');
-      hiddenInputToken.setAttribute('name', 'stripeToken');
-      hiddenInputToken.setAttribute('value', token.id);
-      form.appendChild(hiddenInputToken);
-
-      // Create hidden input for name
-      var hiddenInputName = document.createElement('input');
-      hiddenInputName.setAttribute('type', 'hidden');
-      hiddenInputName.setAttribute('name', 'name');
-      hiddenInputName.setAttribute('value', document.querySelector('[name="name"]').value);
-      form.appendChild(hiddenInputName);
-
-      // Create hidden input for email
-      var hiddenInputEmail = document.createElement('input');
-      hiddenInputEmail.setAttribute('type', 'hidden');
-      hiddenInputEmail.setAttribute('name', 'email');
-      hiddenInputEmail.setAttribute('value', document.querySelector('[name="email"]').value);
-      form.appendChild(hiddenInputEmail);
-
-      // Create hidden input for address
-      var hiddenInputAddress = document.createElement('input');
-      hiddenInputAddress.setAttribute('type', 'hidden');
-      hiddenInputAddress.setAttribute('name', 'address');
-      hiddenInputAddress.setAttribute('value', document.querySelector('[name="address"]').value);
-      form.appendChild(hiddenInputAddress);
-
-      // Create hidden input for phone
-      var hiddenInputPhone = document.createElement('input');
-      hiddenInputPhone.setAttribute('type', 'hidden');
-      hiddenInputPhone.setAttribute('name', 'phone');
-      hiddenInputPhone.setAttribute('value', document.querySelector('[name="phone"]').value);
-      form.appendChild(hiddenInputPhone);
-
-      // Submit the form
-      form.submit();
-    }
-  });
-</script>
-
-<!-- Add some custom CSS styles for layout and colors -->
 <style>
   body {
     font-family: 'Arial', sans-serif;
@@ -190,3 +108,87 @@
     color: #a94442;
   }
 </style>
+
+
+
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var stripe = Stripe('<%= Rails.configuration.stripe[:publishable_key] %>');
+    var elements = stripe.elements();
+
+    var style = {
+      base: {
+        fontSize: "16px",
+        color: "#32325d",
+        fontFamily: "'Helvetica Neue', Helvetica, sans-serif",
+        "::placeholder": { color: "#aab7c4" }
+      },
+      invalid: { color: "#fa755a", iconColor: "#fa755a" }
+    };
+
+    var card = elements.create('card', { style: style });
+    card.mount('#card-element');
+
+    var form = document.querySelector('form');
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+      if (!form.checkValidity()) {
+        alert("Please fill out all fields correctly.");
+        return;
+      }
+
+      stripe.createToken(card).then(function(result) {
+        if (result.error) {
+          var errorElement = document.getElementById('card-errors');
+          errorElement.textContent = result.error.message;
+        } else {
+          stripeTokenHandler(result.token);
+        }
+      });
+    });
+
+    function stripeTokenHandler(token) {
+      var form = document.querySelector('form');
+
+      // Create hidden input for stripeToken
+      var hiddenInputToken = document.createElement('input');
+      hiddenInputToken.setAttribute('type', 'hidden');
+      hiddenInputToken.setAttribute('name', 'stripeToken');
+      hiddenInputToken.setAttribute('value', token.id);
+      form.appendChild(hiddenInputToken);
+
+      // Create hidden input for name
+      var hiddenInputName = document.createElement('input');
+      hiddenInputName.setAttribute('type', 'hidden');
+      hiddenInputName.setAttribute('name', 'name');
+      hiddenInputName.setAttribute('value', document.querySelector('[name="name"]').value);
+      form.appendChild(hiddenInputName);
+
+      // Create hidden input for email
+      var hiddenInputEmail = document.createElement('input');
+      hiddenInputEmail.setAttribute('type', 'hidden');
+      hiddenInputEmail.setAttribute('name', 'email');
+      hiddenInputEmail.setAttribute('value', document.querySelector('[name="email"]').value);
+      form.appendChild(hiddenInputEmail);
+
+      // Create hidden input for address
+      var hiddenInputAddress = document.createElement('input');
+      hiddenInputAddress.setAttribute('type', 'hidden');
+      hiddenInputAddress.setAttribute('name', 'address');
+      hiddenInputAddress.setAttribute('value', document.querySelector('[name="address"]').value);
+      form.appendChild(hiddenInputAddress);
+
+      // Create hidden input for phone
+      var hiddenInputPhone = document.createElement('input');
+      hiddenInputPhone.setAttribute('type', 'hidden');
+      hiddenInputPhone.setAttribute('name', 'phone');
+      hiddenInputPhone.setAttribute('value', document.querySelector('[name="phone"]').value);
+      form.appendChild(hiddenInputPhone);
+
+      // Submit the form
+      form.submit();
+    }
+  });
+</script>

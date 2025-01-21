@@ -1,0 +1,4 @@
+// make_admin.js.erb
+var userRow = document.getElementById('user-<%= @user.id %>');
+userRow.querySelector('.role').textContent = 'Admin';  // Update the role column
+userRow.querySelector('.actions').innerHTML = '<%= j render("admin/dashboard/display_user_actions", user: @user) %>';  // Update the actions column
