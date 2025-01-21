@@ -1,5 +1,3 @@
-// Append the new comment to the comment list
+//code for adding the comment without any page load
 $(".comments").append('<%= j render partial: "comments/comment", locals: { comment: @comment } %>');
-
-// Clear the form
 $("form")[0].reset();

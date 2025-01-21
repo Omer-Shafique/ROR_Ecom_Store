@@ -1,17 +1,17 @@
 <div class="comment mb-1 p-2 shadow-sm position-relative" style="border: none; border-radius: 8px; background-color: #f1f1f1; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-  <% if current_user == comment.user || current_user.admin? %>
+    <% if current_user == comment.user || current_user.admin? %>
     <%= link_to "&#10005;".html_safe, review_comment_path(comment.review_id, comment), method: :delete, 
                 data: { confirm: 'Are you sure?' }, 
                 class: "btn btn-outline-danger btn-sm rounded-circle delete-icon",
                 style: "width: 20px; height: 20px; font-size: 12px; padding: 0; line-height: 16px; position: absolute; top: 5px; right: 5px;" %>
-  <% end %>
+    <% end %>
 
-  <p class="mb-1" style="font-size: 0.85rem;">
-    <strong style="color: #007bff; font-weight: 500;">
-      <%= comment.user.first_name.present? && comment.user.last_name.present? ? "#{comment.user.first_name} #{comment.user.last_name}" : 'Anonymous' %>
-    </strong>
-    <%= comment.content %>
-  </p>
+    <p class="mb-1" style="font-size: 0.85rem;">
+        <strong style="color: #007bff; font-weight: 500;">
+            <%= comment.user.first_name.present? && comment.user.last_name.present? ? "#{comment.user.first_name} #{comment.user.last_name}" : 'Anonymous' %>
+        </strong>
+        <%= comment.content %>
+    </p>
 
-  <p class="text-muted" style="font-size: 0.7rem;"><%= time_ago_in_words(comment.created_at) %> ago</p>
+    <p class="text-muted" style="font-size: 0.7rem;"><%= time_ago_in_words(comment.created_at) %> ago</p>
 </div>
